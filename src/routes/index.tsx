@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { BackgroundMusic } from "../components/BackgroundMusic";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,13 +20,12 @@ export const Route = createFileRoute("/")({
 });
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   MEDIA ARRAY
+   AUTO-DISCOVERY
 
-   type    "image" | "video"
-   src     URL to the photo or .mp4
-   poster  (videos) thumbnail before play
-   message Secret note revealed on tap
-   wide    true = full-width card, false = half-width
+   The gallery auto-discovers files in public/images/ and public/videos/.
+   Drop a `gallery-XX.jpg` (or .png/.webp) into public/images/ OR a
+   `gallery-XX.mp4` into public/videos/ and it appears in the grid
+   automatically — no code edits required.
 ═══════════════════════════════════════════════════════════════════════════ */
 
 interface MediaItem {
@@ -36,148 +36,110 @@ interface MediaItem {
   wide: boolean;
 }
 
-const MEDIA: MediaItem[] = [
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=900&q=80",
-    message: "Your smile is the most beautiful thing I have ever seen.",
-    wide: true,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1496440737103-cd596325d314?auto=format&fit=crop&w=600&q=80",
-    message: "The way you laugh makes the whole world brighter.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=600&q=80",
-    message: "You are stronger than you know, and more loved than you imagine.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80",
-    message: "You make ordinary moments feel absolutely magical.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=600&q=80",
-    message: "Your kindness touches everyone you meet, effortlessly.",
-    wide: false,
-  },
-  {
-    type: "video",
-    src: "https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4",
-    poster:
-      "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=900&q=80",
-    message: "Every moment with you feels like golden hour.",
-    wide: true,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=600&q=80",
-    message: "Here is to all the adventures still ahead of you.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=600&q=80",
-    message: "Your dreams are valid. Every single one of them.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1517637382994-f02da38c6728?auto=format&fit=crop&w=900&q=80",
-    message: "Thank you for being exactly who you are.",
-    wide: true,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=600&q=80",
-    message: "You deserve all the happiness in the universe.",
-    wide: false,
-  },
-  {
-    type: "video",
-    src: "https://cdn.pixabay.com/video/2020/09/08/49375-457948416_large.mp4",
-    poster:
-      "https://images.unsplash.com/photo-1499915855317-7d4d9c4f1f5e?auto=format&fit=crop&w=600&q=80",
-    message: "The world is a better, brighter place because you are in it.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=600&q=80",
-    message: "Keep shining, Prativa. You are extraordinary.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1485178575877-1a13bf489dfe?auto=format&fit=crop&w=600&q=80",
-    message: "Your spirit is something this world truly needs.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
-    message: "Happy Birthday to the most incredible person I know.",
-    wide: false,
-  },
-  {
-    type: "video",
-    src: "https://cdn.pixabay.com/video/2019/10/14/27725-368903098_large.mp4",
-    poster:
-      "https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=900&q=80",
-    message: "Your laughter is contagious, and I never want it to stop.",
-    wide: true,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80",
-    message: "You are the definition of grace and strength, beautifully combined.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1509626549585-2dcdb7ca7c51?auto=format&fit=crop&w=600&q=80",
-    message: "I am so grateful for every single memory we have shared.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80",
-    message: "May this year bring you everything your heart desires.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1445991842772-097fea258e7b?auto=format&fit=crop&w=600&q=80",
-    message: "Growing alongside you has been my greatest gift.",
-    wide: false,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1503435824048-a799a3a84bf7?auto=format&fit=crop&w=600&q=80",
-    message: "This moment, this memory — made just for you.",
-    wide: false,
-  },
-  {
-    type: "video",
-    src: "https://cdn.pixabay.com/video/2020/08/01/46009-446818826_large.mp4",
-    poster:
-      "https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=900&q=80",
-    message: "Here is to you — always, and forever. ✨",
-    wide: true,
-  },
-  {
-    type: "image",
-    src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80",
-    message: "Wishing you endless joy, Prativa. Happy Birthday. 🤍",
-    wide: false,
-  },
+/* ── Auto-discover every gallery file at build time ─────────────────────
+   Vite's `import.meta.glob` enumerates actual files in `public/`, so
+   dropping a new `gallery-XX.jpg` or `gallery-XX.mp4` into the right
+   folder is enough — no code edits required. */
+const IMAGE_FILES = import.meta.glob("/public/images/gallery-*", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>;
+
+const VIDEO_FILES = import.meta.glob("/public/videos/gallery-*", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>;
+
+/* Auto-discover the final video (`final.mp4`) at build time. */
+const FINAL_VIDEO_FILE = import.meta.glob("/public/videos/final.mp4", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>;
+const FINAL_VIDEO_SRC: string | null =
+  Object.values(FINAL_VIDEO_FILE)[0] ?? null;
+
+function extractSlot(path: string): string | null {
+  const m = /gallery-(\d+)\./i.exec(path);
+  return m ? m[1] : null;
+}
+
+const imageBySlot: Record<string, string> = {};
+for (const [path, url] of Object.entries(IMAGE_FILES)) {
+  const slot = extractSlot(path);
+  if (slot) imageBySlot[slot] = url;
+}
+
+const videoBySlot: Record<string, string> = {};
+for (const [path, url] of Object.entries(VIDEO_FILES)) {
+  const slot = extractSlot(path);
+  if (slot) videoBySlot[slot] = url;
+}
+
+const ALL_SLOTS = Array.from(
+  new Set([...Object.keys(imageBySlot), ...Object.keys(videoBySlot)]),
+).sort((a, b) => Number(a) - Number(b));
+
+/* Per-slot customisation: override message / mark as wide. */
+const SLOT_META: Record<string, { message?: string; wide?: boolean }> = {
+  "01": { wide: true },
+  "06": { wide: true },
+  "09": { wide: true },
+  "10": { message: "You deserve all the happiness in the universe." },
+  "11": { wide: false },
+  "15": { wide: true },
+  "18": { message: "May this year bring you everything your heart desires." },
+  "21": { wide: true },
+};
+
+const DEFAULT_MESSAGES = [
+  "You make the world brighter just by being in it. ✨",
+  "A little reminder of how loved you are.",
+  "Some moments are worth keeping forever.",
+  "You deserve every good thing coming your way.",
+  "Thinking of you, always.",
+  "You are someone's favourite person, you know.",
+  "Another memory, another reason to smile.",
+  "This one's just for you, Prativa. 🤍",
 ];
+
+const slotMessage = (slot: string): string => {
+  const explicit = SLOT_META[slot]?.message;
+  if (explicit) return explicit;
+  return DEFAULT_MESSAGES[Number(slot) % DEFAULT_MESSAGES.length];
+};
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=900&q=80";
+const FALLBACK_POSTER =
+  "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=900&q=80";
+
+const MEDIA: MediaItem[] = ALL_SLOTS.map((slot) => {
+  const num = Number(slot);
+  const videoUrl = videoBySlot[slot];
+  const imageUrl = imageBySlot[slot];
+
+  if (videoUrl) {
+    return {
+      type: "video",
+      src: videoUrl,
+      poster: imageUrl ?? FALLBACK_POSTER,
+      message: slotMessage(slot),
+      wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
+    };
+  }
+
+  return {
+    type: "image",
+    src: imageUrl ?? FALLBACK_IMAGE,
+    message: slotMessage(slot),
+    wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
+  };
+});
+
+/* End of auto-discovered MEDIA array. */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    GIFT CARD — tap-to-flip with hidden message
@@ -514,10 +476,13 @@ function Gallery() {
 
 function FinalVideo() {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
+  // Prefer the local `final.mp4` from public/videos/; fall back to a remote URL.
   const finalVideoSrc =
+    FINAL_VIDEO_SRC ??
     "https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4";
   const finalPoster =
     "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=1200&q=80";
@@ -537,12 +502,25 @@ function FinalVideo() {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [finalVideoSrc]);
 
-  // Autoplay when visible
+  // Autoplay when visible — also notify the global BackgroundMusic so it
+  // can "duck" (fade its volume) while the final video is audible.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    const dispatchPlaying = () => {
+      window.dispatchEvent(new Event("video-playing"));
+    };
+    const dispatchPaused = () => {
+      window.dispatchEvent(new Event("video-paused"));
+    };
+
+    video.addEventListener("play", dispatchPlaying);
+    video.addEventListener("pause", dispatchPaused);
+    video.addEventListener("ended", dispatchPaused);
+
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.intersectionRatio >= 0.3) {
@@ -554,8 +532,24 @@ function FinalVideo() {
       { threshold: 0.3 },
     );
     obs.observe(video);
-    return () => obs.disconnect();
+
+    return () => {
+      video.removeEventListener("play", dispatchPlaying);
+      video.removeEventListener("pause", dispatchPaused);
+      video.removeEventListener("ended", dispatchPaused);
+      obs.disconnect();
+    };
   }, []);
+
+  // Tap to toggle mute (tap counts as a user gesture, which unblocks sound).
+  const handleToggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    video.muted = nextMuted;
+    video.play().catch(() => {});
+  };
 
   return (
     <section ref={sectionRef} className="relative bg-midnight px-2.5 pb-16 sm:px-4">
@@ -579,19 +573,85 @@ function FinalVideo() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative rounded-2xl overflow-hidden shadow-[0_0_40px_oklch(0.88_0.06_10/0.15)]"
         >
-          <video
-            ref={videoRef}
-            src={videoSrc ?? undefined}
-            poster={finalPoster}
-            muted
-            loop
-            playsInline
-            preload="none"
-            className="w-full h-auto object-cover bg-midnight"
-          />
+          <div
+            onClick={handleToggleMute}
+            className="relative cursor-pointer"
+            role="button"
+            aria-label={isMuted ? "Tap to unmute video" : "Tap to mute video"}
+          >
+            <video
+              ref={videoRef}
+              src={videoSrc ?? undefined}
+              poster={finalPoster}
+              muted={isMuted}
+              loop
+              playsInline
+              preload="none"
+              className="w-full h-auto object-cover bg-midnight"
+            />
 
-          {/* Soft vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-transparent to-midnight/20 pointer-events-none" />
+            {/* Soft vignette */}
+            <div className="absolute inset-0 bg-gradient-to-t from-midnight/60 via-transparent to-midnight/20 pointer-events-none" />
+
+            {/* Tap-to-unmute hint (only while muted) */}
+            {isMuted && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <motion.span
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-midnight/65 px-3 py-1.5 font-sans text-[10px] tracking-widest text-cream/85 backdrop-blur-sm"
+                >
+                  <svg
+                    className="w-3.5 h-3.5 text-champagne/80"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.6}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5.586 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+                    />
+                  </svg>
+                  tap for sound
+                </motion.span>
+              </div>
+            )}
+
+            {/* Tappable "sound on" badge once unmuted */}
+            {!isMuted && (
+              <div className="absolute bottom-2 right-2 pointer-events-none">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-midnight/60 px-2.5 py-1 font-sans text-[9px] tracking-widest text-cream/70 backdrop-blur-sm">
+                  <svg
+                    className="w-3 h-3 text-champagne/80"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.6}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5.586 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.536 8.464a5 5 0 0 1 0 7.072M18.364 5.636a9 9 0 0 1 0 12.728"
+                    />
+                  </svg>
+                  tap to mute
+                </span>
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
     </section>
@@ -716,6 +776,7 @@ function Closing() {
 function Index() {
   return (
     <main className="overflow-x-hidden bg-midnight text-cream">
+      <BackgroundMusic />
       <Hero />
       <Gallery />
       <FinalVideo />
