@@ -1,752 +1,616 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-  useReducedMotion,
-  PanInfo,
-} from "framer-motion";
-import confetti from "canvas-confetti";
-import {
-  ChevronDown,
-  Gift,
-  Mail,
-  Heart,
-  Sparkles,
-  Play,
-  X,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Happy Birthday, Prativa ✨" },
-      { name: "description", content: "A magical birthday celebration for Prativa — memories, messages, and a little bit of magic." },
+      {
+        name: "description",
+        content: "A magical birthday journey for Prativa — memories, messages, and love.",
+      },
       { property: "og:title", content: "Happy Birthday, Prativa ✨" },
-      { property: "og:description", content: "A magical birthday celebration for Prativa." },
+      { property: "og:description", content: "A magical birthday journey for Prativa." },
+      { name: "theme-color", content: "#110f1c" },
     ],
   }),
   component: Index,
 });
 
-/* =====================================================================
-   📸  MEDIA MANIFEST — paste your URLs here
-   Drop your 20–25 photos/videos into these arrays. Everything below
-   maps over them automatically. Use any public URL or import from
-   /public  ("/my-photo.jpg") or src/assets.
-   ===================================================================== */
+/* ═══════════════════════════════════════════════════════════════════════════
+   MEDIA ARRAY — The only section you need to edit.
 
-const HERO_BG =
-  "https://images.unsplash.com/photo-1517637382994-f02da38c6728?auto=format&fit=crop&w=1600&q=80";
-// Optional: HERO_VIDEO = "/hero-loop.mp4"  — uncomment block in <Hero/> to use
+   For each item:
+     type    "image" | "video"
+     src     URL to the photo or .mp4 video
+     poster  (videos only) thumbnail URL shown before the video plays
+     message The secret note revealed when Prativa taps the card
+     span    1 = half-width column  |  2 = full-width row
+     aspect  "portrait" (3:4)  |  "square" (1:1)  |  "landscape" (16:9)  |  "tall" (2:3)
+═══════════════════════════════════════════════════════════════════════════ */
 
-// 🎬 VIDEOS for the cinematic filmstrip (any number)
-const VIDEOS: { src: string; poster: string; label?: string }[] = [
+interface MediaItem {
+  type: "image" | "video";
+  src: string;
+  poster?: string;
+  message: string;
+  span: 1 | 2;
+  aspect: "portrait" | "square" | "landscape" | "tall";
+}
+
+const MEDIA: MediaItem[] = [
   {
-    src: "https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4",
-    poster: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80",
-    label: "Sunset smiles",
+    type: "image",
+    src: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=900&q=80",
+    message: "Your smile is the most beautiful thing I have ever seen.",
+    span: 2,
+    aspect: "landscape",
   },
   {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1496440737103-cd596325d314?auto=format&fit=crop&w=600&q=80",
+    message: "The way you laugh makes the whole world brighter.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=600&q=80",
+    message: "You are stronger than you know, and more loved than you imagine.",
+    span: 1,
+    aspect: "square",
+  },
+  {
+    type: "video",
+    src: "https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4",
+    poster:
+      "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=900&q=80",
+    message: "Every moment with you feels like golden hour.",
+    span: 2,
+    aspect: "landscape",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80",
+    message: "You make ordinary moments feel absolutely magical.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=600&q=80",
+    message: "Your kindness touches everyone you meet, effortlessly.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=600&q=80",
+    message: "Here is to all the adventures still ahead of you.",
+    span: 1,
+    aspect: "tall",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=600&q=80",
+    message: "Your dreams are valid. Every single one of them.",
+    span: 1,
+    aspect: "square",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1517637382994-f02da38c6728?auto=format&fit=crop&w=900&q=80",
+    message: "Thank you for being exactly who you are.",
+    span: 2,
+    aspect: "landscape",
+  },
+  {
+    type: "video",
     src: "https://cdn.pixabay.com/video/2020/09/08/49375-457948416_large.mp4",
-    poster: "https://images.unsplash.com/photo-1496440737103-cd596325d314?auto=format&fit=crop&w=800&q=80",
-    label: "Golden hour",
+    poster:
+      "https://images.unsplash.com/photo-1499915855317-7d4d9c4f1f5e?auto=format&fit=crop&w=600&q=80",
+    message: "The world is a better, brighter place because you are in it.",
+    span: 1,
+    aspect: "portrait",
   },
   {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=600&q=80",
+    message: "You deserve all the happiness in the universe.",
+    span: 1,
+    aspect: "square",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=600&q=80",
+    message: "Keep shining, Prativa. You are extraordinary.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1485178575877-1a13bf489dfe?auto=format&fit=crop&w=600&q=80",
+    message: "Your spirit is something this world truly needs.",
+    span: 1,
+    aspect: "tall",
+  },
+  {
+    type: "video",
     src: "https://cdn.pixabay.com/video/2019/10/14/27725-368903098_large.mp4",
-    poster: "https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=800&q=80",
-    label: "Little adventures",
+    poster:
+      "https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=900&q=80",
+    message: "Your laughter is contagious, and I never want it to stop.",
+    span: 2,
+    aspect: "landscape",
   },
   {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
+    message: "Happy Birthday to the most incredible person I know.",
+    span: 1,
+    aspect: "square",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80",
+    message: "You are the definition of grace and strength, beautifully combined.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1509626549585-2dcdb7ca7c51?auto=format&fit=crop&w=600&q=80",
+    message: "I am so grateful for every single memory we have shared.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80",
+    message: "May this year bring you everything your heart desires.",
+    span: 1,
+    aspect: "square",
+  },
+  {
+    type: "video",
+    src: "https://cdn.pixabay.com/video/2020/08/01/46009-446818826_large.mp4",
+    poster:
+      "https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=900&q=80",
+    message: "Here is to you — always, and forever. ✨",
+    span: 2,
+    aspect: "landscape",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1445991842772-097fea258e7b?auto=format&fit=crop&w=600&q=80",
+    message: "Growing alongside you has been my greatest gift.",
+    span: 1,
+    aspect: "tall",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1503435824048-a799a3a84bf7?auto=format&fit=crop&w=600&q=80",
+    message: "This moment, this memory — made just for you.",
+    span: 1,
+    aspect: "portrait",
+  },
+  {
+    type: "video",
     src: "https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4",
-    poster: "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=800&q=80",
-    label: "Laughing",
+    poster:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    message: "Wishing you endless joy, Prativa. Happy Birthday. 🤍",
+    span: 2,
+    aspect: "landscape",
   },
 ];
 
-// 🖼 PHOTOS for the masonry wall (10–15+ recommended)
-const PHOTOS: string[] = [
-  "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1496440737103-cd596325d314?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1499915855317-7d4d9c4f1f5e?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1485178575877-1a13bf489dfe?auto=format&fit=crop&w=800&q=80",
-];
+/* ═══════════════════════════════════════════════════════════════════════════
+   MEDIA CARD
+   - Front: photo or auto-playing video
+   - Back: frosted glass message panel (revealed on tap)
+   - Uses Intersection Observer for scroll-synced autoplay and lazy src loading
+═══════════════════════════════════════════════════════════════════════════ */
 
-// 🪄 POLAROIDS for the swipeable deck (3–5)
-const POLAROIDS: { src: string; caption: string }[] = [
-  { src: "https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=800&q=80", caption: "you & the sunshine" },
-  { src: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80", caption: "best laugh ever" },
-  { src: "https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=800&q=80", caption: "city lights" },
-  { src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80", caption: "cozy ☕" },
-  { src: "https://images.unsplash.com/photo-1485178575877-1a13bf489dfe?auto=format&fit=crop&w=800&q=80", caption: "wanderer" },
-];
+const ASPECT_CLASS: Record<MediaItem["aspect"], string> = {
+  portrait: "aspect-[3/4]",
+  square: "aspect-square",
+  landscape: "aspect-video",
+  tall: "aspect-[2/3]",
+};
 
-// 🎁 Reasons — tap to reveal
-const REASONS = [
-  { icon: Gift, color: "from-blush to-champagne", title: "Your incredible smile", body: "It lights up every single room you walk into." },
-  { icon: Mail, color: "from-lavender to-blush", title: "Your kind heart", body: "The way you care for everyone around you is pure magic." },
-  { icon: Heart, color: "from-champagne to-lavender", title: "Your wild spirit", body: "Always dreaming, always shining, always you." },
-  { icon: Sparkles, color: "from-blush to-lavender", title: "The way you laugh", body: "It's the soundtrack of all my favorite memories." },
-];
+function MediaCard({ item, index }: { item: MediaItem; index: number }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-/* ===================================================================== */
-
-function Index() {
-  return (
-    <main className="overflow-x-hidden bg-cream text-midnight">
-      <Hero />
-      <MomentsFilmstrip />
-      <PhotoWall />
-      <Reasons />
-      <PolaroidDeck />
-      <VideoHighlight />
-      <Ending />
-    </main>
-  );
-}
-
-/* ---------- HERO ---------- */
-function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
-  return (
-    <section ref={ref} className="relative min-h-screen overflow-hidden">
-      <motion.div style={{ y }} className="absolute inset-0 -z-10">
-        {/* Swap <img> for a <video> loop if you have one */}
-        <img src={HERO_BG} alt="" className="h-[120%] w-full object-cover" loading="eager" />
-        {/* <video src="/hero-loop.mp4" autoPlay muted loop playsInline className="h-[120%] w-full object-cover" /> */}
-        <div className="absolute inset-0 bg-gradient-to-b from-midnight/40 via-blush/20 to-cream" />
-      </motion.div>
-
-      {[...Array(20)].map((_, i) => (
-        <span
-          key={i}
-          className="pointer-events-none absolute h-1 w-1 rounded-full bg-champagne animate-twinkle"
-          style={{
-            left: `${(i * 53) % 100}%`,
-            top: `${(i * 37) % 100}%`,
-            animationDelay: `${(i % 5) * 0.5}s`,
-          }}
-        />
-      ))}
-
-      <motion.div
-        style={{ opacity }}
-        className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center"
-      >
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, delay: 0.4 }}
-          className="font-script text-2xl text-champagne sm:text-3xl"
-        >
-          A little something for
-        </motion.p>
-
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
-          className="mt-4 font-display text-5xl font-light leading-tight text-cream animate-glow sm:text-7xl md:text-8xl"
-        >
-          Happy Birthday,
-          <br />
-          <span className="font-script text-blush">Prativa</span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, delay: 2.2 }}
-          className="mt-6 max-w-md font-sans text-base text-cream/90 sm:text-lg"
-        >
-          Scroll gently — a whole journey of memories awaits you below ✨
-        </motion.p>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 3 }}
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
-      >
-        <ChevronDown className="h-8 w-8 text-cream animate-bounce-soft" />
-      </motion.div>
-    </section>
-  );
-}
-
-/* ---------- MOMENTS · horizontal video filmstrip ---------- */
-function MomentsFilmstrip() {
-  const scrollerRef = useRef<HTMLDivElement>(null);
-
-  const scrollBy = (dir: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
-  };
-
-  return (
-    <section className="relative bg-gradient-to-b from-cream to-blush/20 py-20 sm:py-28">
-      <div className="mx-auto max-w-5xl px-6 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="font-display text-4xl font-light text-midnight sm:text-6xl"
-        >
-          Moments in <span className="font-script text-blush">Motion</span>
-        </motion.h2>
-        <p className="mt-3 font-sans text-sm text-midnight/70 sm:text-base">
-          Swipe through the filmstrip — tap any frame to play.
-        </p>
-      </div>
-
-      <div className="relative mt-12">
-        {/* film perforations top/bottom */}
-        <div className="pointer-events-none absolute inset-x-0 top-2 h-3 bg-[repeating-linear-gradient(90deg,oklch(0.22_0.08_280)_0_8px,transparent_8px_24px)] opacity-80" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-2 h-3 bg-[repeating-linear-gradient(90deg,oklch(0.22_0.08_280)_0_8px,transparent_8px_24px)] opacity-80" />
-
-        <div className="bg-midnight py-6">
-          <div
-            ref={scrollerRef}
-            className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-2 [scrollbar-width:none] sm:gap-6 sm:px-10 [&::-webkit-scrollbar]:hidden"
-          >
-            {VIDEOS.map((v, i) => (
-              <FilmCell key={i} v={v} />
-            ))}
-          </div>
-        </div>
-
-        {/* arrows (hidden on touch) */}
-        <button
-          onClick={() => scrollBy(-1)}
-          aria-label="Previous"
-          className="absolute left-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-cream/90 p-2 text-midnight shadow-lg backdrop-blur sm:block"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => scrollBy(1)}
-          aria-label="Next"
-          className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-cream/90 p-2 text-midnight shadow-lg backdrop-blur sm:block"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
-    </section>
-  );
-}
-
-function FilmCell({ v }: { v: (typeof VIDEOS)[number] }) {
-  const [playing, setPlaying] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const prefersReduced = useReducedMotion();
 
-  const play = () => {
-    setPlaying(true);
-    requestAnimationFrame(() => videoRef.current?.play());
-  };
+  // Ref keeps the autoplay observer closure from going stale
+  const isFlippedRef = useRef(false);
+  isFlippedRef.current = isFlipped;
+
+  // 1. Lazy src — populate src only once the card approaches the viewport
+  useEffect(() => {
+    if (item.type !== "video") return;
+    const el = cardRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVideoSrc(item.src);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "500px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [item.type, item.src]);
+
+  // 2. Autoplay — play when ≥50% of the video is visible, pause otherwise
+  useEffect(() => {
+    if (item.type !== "video") return;
+    const video = videoRef.current;
+    if (!video) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        const nowVisible = entry.intersectionRatio >= 0.5;
+        setIsVisible(nowVisible);
+        if (nowVisible && !isFlippedRef.current) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    obs.observe(video);
+    return () => obs.disconnect();
+  }, [item.type]);
+
+  // 3. Start playing once src is set and the card is already in view
+  useEffect(() => {
+    if (videoSrc && isVisible && !isFlippedRef.current) {
+      videoRef.current?.play().catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoSrc]);
+
+  // 4. Sync playback with flip state changes
+  useEffect(() => {
+    if (item.type !== "video") return;
+    if (isFlipped) {
+      videoRef.current?.pause();
+    } else if (isVisible && videoSrc) {
+      videoRef.current?.play().catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFlipped]);
+
+  const spanClass = item.span === 2 ? "col-span-2" : "col-span-1";
+  const aspectClass = ASPECT_CLASS[item.aspect];
 
   return (
     <motion.div
-      whileTap={{ scale: 0.97 }}
-      className="relative aspect-[3/4] w-[78vw] max-w-[320px] flex-none snap-center overflow-hidden rounded-xl border border-champagne/30 bg-black shadow-[0_20px_60px_-20px_oklch(0.22_0.08_280/0.6)] sm:w-[280px]"
+      ref={cardRef}
+      className={`${spanClass} ${aspectClass} cursor-pointer`}
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-25px" }}
+      transition={{ duration: 0.55, delay: (index % 4) * 0.07, ease: "easeOut" }}
+      onClick={() => setIsFlipped((f) => !f)}
+      style={{ perspective: "1200px" }}
     >
-      {!playing ? (
-        <>
-          <img
-            src={v.poster}
-            alt={v.label ?? "video"}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-midnight/10 to-transparent" />
-          <button
-            onClick={play}
-            aria-label="Play video"
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-cream/90 shadow-xl ring-1 ring-champagne/40 transition-transform hover:scale-110">
-              <Play className="ml-1 h-7 w-7 fill-midnight text-midnight" />
-            </span>
-          </button>
-          {v.label && (
-            <p className="absolute bottom-3 left-0 right-0 text-center font-script text-base text-cream">
-              {v.label}
-            </p>
+      <motion.div
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        transition={{ duration: prefersReduced ? 0 : 0.6, ease: [0.23, 1, 0.32, 1] }}
+        className="relative w-full h-full"
+        style={
+          {
+            transformStyle: "preserve-3d",
+            WebkitTransformStyle: "preserve-3d",
+          } as React.CSSProperties
+        }
+      >
+        {/* ── FRONT ── */}
+        <div
+          className="absolute inset-0 rounded-2xl overflow-hidden"
+          style={
+            {
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+            } as React.CSSProperties
+          }
+        >
+          {item.type === "image" ? (
+            <img
+              src={item.src}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              src={videoSrc ?? undefined}
+              poster={item.poster}
+              muted
+              loop
+              playsInline
+              preload="none"
+              className="w-full h-full object-cover bg-midnight"
+            />
           )}
-        </>
-      ) : (
-        <video
-          ref={videoRef}
-          src={v.src}
-          poster={v.poster}
-          controls
-          playsInline
-          preload="metadata"
-          className="h-full w-full object-cover"
-        />
-      )}
+
+          {/* Vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-midnight/50 via-transparent to-transparent pointer-events-none" />
+
+          {/* Tap hint badge */}
+          <div className="absolute bottom-2 right-2 pointer-events-none">
+            <span className="inline-block rounded-full bg-midnight/65 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-cream/65">
+              tap ✦
+            </span>
+          </div>
+        </div>
+
+        {/* ── BACK (message) ── */}
+        <div
+          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2.5 px-4 py-5 text-center"
+          style={
+            {
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+              background: "oklch(0.16 0.09 280 / 0.95)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              border: "1px solid oklch(0.86 0.09 85 / 0.20)",
+            } as React.CSSProperties
+          }
+        >
+          <span className="font-sans text-[9px] tracking-[0.2em] text-champagne/55 uppercase">
+            for you ✦
+          </span>
+          <p className="font-script text-lg leading-snug text-cream sm:text-xl">{item.message}</p>
+          <span className="font-sans text-[8px] text-cream/25 mt-0.5">tap to close</span>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
 
-/* ---------- PHOTO WALL · masonry + lightbox ---------- */
-function PhotoWall() {
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO — Parallax background + one-word-at-a-time reveal
+═══════════════════════════════════════════════════════════════════════════ */
+
+function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "38%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
+  const words: { text: string; className: string }[] = [
+    {
+      text: "Happy.",
+      className: "font-display font-light text-cream tracking-tight text-5xl sm:text-6xl",
+    },
+    {
+      text: "Birthday.",
+      className: "font-display font-light text-cream tracking-tight text-5xl sm:text-6xl",
+    },
+    { text: "Prativa.", className: "font-script text-blush text-6xl sm:text-7xl" },
+  ];
 
   return (
-    <section className="relative bg-gradient-to-b from-blush/20 via-lavender/20 to-cream py-20 sm:py-28">
-      <div className="mx-auto max-w-5xl px-6 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="font-display text-4xl font-light text-midnight sm:text-6xl"
-        >
-          The <span className="font-script text-blush">Photo Wall</span>
-        </motion.h2>
-        <p className="mt-3 font-sans text-sm text-midnight/70 sm:text-base">
-          Tap any photo to expand. Swipe to wander through.
-        </p>
-      </div>
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden">
+      {/* Parallax background image */}
+      <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
+        <img
+          src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80"
+          alt=""
+          loading="eager"
+          className="h-[135%] w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-midnight/65 via-midnight/30 to-midnight" />
+      </motion.div>
 
-      {/* CSS columns = true masonry without JS */}
-      <div className="mx-auto mt-12 max-w-5xl columns-2 gap-3 px-4 sm:columns-3 sm:gap-4 sm:px-6 md:columns-4">
-        {PHOTOS.map((src, i) => (
-          <motion.button
-            key={i}
-            onClick={() => setOpenIdx(i)}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.7, delay: (i % 6) * 0.08, ease: "easeOut" }}
-            className="mb-3 block w-full overflow-hidden rounded-lg break-inside-avoid bg-white p-1 shadow-[0_6px_24px_-10px_oklch(0.22_0.08_280/0.4)] transition-transform hover:scale-[1.02] sm:mb-4 sm:p-1.5"
-          >
-            <img
-              src={src}
-              alt={`Memory ${i + 1}`}
-              loading="lazy"
-              decoding="async"
-              className="h-auto w-full rounded-md object-cover"
-              style={{ aspectRatio: i % 3 === 0 ? "3/4" : i % 3 === 1 ? "1/1" : "4/5" }}
-            />
-          </motion.button>
-        ))}
-      </div>
-
-      <Lightbox
-        photos={PHOTOS}
-        openIdx={openIdx}
-        onClose={() => setOpenIdx(null)}
-      />
-    </section>
-  );
-}
-
-function Lightbox({
-  photos,
-  openIdx,
-  onClose,
-}: {
-  photos: string[];
-  openIdx: number | null;
-  onClose: () => void;
-}) {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    if (openIdx !== null) setIdx(openIdx);
-  }, [openIdx]);
-
-  useEffect(() => {
-    if (openIdx === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") setIdx((i) => (i + 1) % photos.length);
-      if (e.key === "ArrowLeft") setIdx((i) => (i - 1 + photos.length) % photos.length);
-    };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [openIdx, photos.length, onClose]);
-
-  const next = () => setIdx((i) => (i + 1) % photos.length);
-  const prev = () => setIdx((i) => (i - 1 + photos.length) % photos.length);
-
-  const onDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -80) next();
-    else if (info.offset.x > 80) prev();
-  };
-
-  return (
-    <AnimatePresence>
-      {openIdx !== null && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-midnight/95 backdrop-blur-md"
-          onClick={onClose}
-        >
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="absolute right-4 top-4 z-10 rounded-full bg-cream/10 p-2 text-cream backdrop-blur-md transition-colors hover:bg-cream/20"
-          >
-            <X className="h-6 w-6" />
-          </button>
-
-          <button
-            onClick={(e) => { e.stopPropagation(); prev(); }}
-            aria-label="Previous"
-            className="absolute left-3 z-10 hidden rounded-full bg-cream/10 p-3 text-cream backdrop-blur-md hover:bg-cream/20 sm:block"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); next(); }}
-            aria-label="Next"
-            className="absolute right-3 z-10 hidden rounded-full bg-cream/10 p-3 text-cream backdrop-blur-md hover:bg-cream/20 sm:block"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={idx}
-              src={photos[idx]}
-              alt={`Photo ${idx + 1}`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.25 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              onDragEnd={onDragEnd}
-              onClick={(e) => e.stopPropagation()}
-              className="max-h-[85vh] max-w-[92vw] cursor-grab rounded-lg object-contain shadow-2xl active:cursor-grabbing"
-              draggable={false}
-            />
-          </AnimatePresence>
-
-          <div className="absolute bottom-6 left-0 right-0 text-center font-sans text-xs text-cream/70">
-            {idx + 1} / {photos.length}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-/* ---------- REASONS ---------- */
-function Reasons() {
-  const [opened, setOpened] = useState<number | null>(null);
-
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-cream via-blush/30 to-lavender/30 py-24 sm:py-32">
-      <div className="mx-auto max-w-4xl px-6 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="font-display text-4xl font-light text-midnight sm:text-6xl"
-        >
-          Reasons You're <span className="font-script text-blush">Amazing</span>
-        </motion.h2>
-        <p className="mt-4 font-sans text-base text-midnight/70 sm:text-lg">
-          Tap a gift to unwrap a little truth about you 💌
-        </p>
-      </div>
-
-      <div className="mx-auto mt-16 grid max-w-2xl grid-cols-2 gap-6 px-6 sm:gap-8">
-        {REASONS.map((r, i) => {
-          const Icon = r.icon;
-          const isOpen = opened === i;
-          return (
-            <motion.button
-              key={i}
-              onClick={() => setOpened(isOpen ? null : i)}
-              whileTap={{ scale: 0.92 }}
-              whileHover={{ y: -6 }}
-              className="relative aspect-square overflow-hidden rounded-3xl"
-              style={{ animation: `float 6s ease-in-out ${i * 0.5}s infinite` }}
-            >
-              <AnimatePresence mode="wait">
-                {!isOpen ? (
-                  <motion.div
-                    key="closed"
-                    initial={{ opacity: 0, rotateY: -90 }}
-                    animate={{ opacity: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, scale: 1.5, rotateY: 90 }}
-                    transition={{ duration: 0.5 }}
-                    className={`flex h-full w-full flex-col items-center justify-center bg-gradient-to-br ${r.color} p-4 shadow-[0_20px_60px_-20px_oklch(0.22_0.08_280/0.6)]`}
-                  >
-                    <Icon className="h-10 w-10 text-cream sm:h-12 sm:w-12" strokeWidth={1.5} />
-                    <span className="mt-3 font-script text-lg text-cream sm:text-xl">Tap me</span>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="open"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "backOut" }}
-                    className="flex h-full w-full flex-col items-center justify-center bg-cream p-4 text-center shadow-inner"
-                  >
-                    <p className="font-display text-lg font-medium text-midnight sm:text-xl">{r.title}</p>
-                    <p className="mt-2 font-sans text-xs text-midnight/70 sm:text-sm">{r.body}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-/* ---------- POLAROID DECK · swipeable cards ---------- */
-function PolaroidDeck() {
-  const [order, setOrder] = useState(POLAROIDS.map((_, i) => i));
-  const reduce = useReducedMotion();
-
-  const swipe = (dir: 1 | -1) => {
-    setOrder((prev) => {
-      const next = [...prev];
-      const top = next.shift();
-      if (top !== undefined) next.push(top);
-      return next;
-    });
-    void dir;
-  };
-
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-lavender/30 to-midnight py-24 sm:py-32">
-      <div className="mx-auto max-w-3xl px-6 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="font-display text-4xl font-light text-cream sm:text-6xl"
-        >
-          A Few More <span className="font-script text-champagne">Smiles</span>
-        </motion.h2>
-        <p className="mt-3 font-sans text-sm text-cream/70 sm:text-base">
-          Swipe the top polaroid to see the next one.
-        </p>
-      </div>
-
-      <div className="relative mx-auto mt-14 h-[420px] w-[280px] sm:h-[480px] sm:w-[340px]">
-        {order.map((idx, stackPos) => {
-          const isTop = stackPos === 0;
-          const offset = stackPos * 8;
-          const rotate = (idx % 2 === 0 ? -1 : 1) * (stackPos + 1) * 2;
-          return (
-            <motion.div
-              key={idx}
-              drag={isTop ? "x" : false}
-              dragConstraints={{ left: 0, right: 0 }}
-              onDragEnd={(_, info) => {
-                if (Math.abs(info.offset.x) > 120 || Math.abs(info.velocity.x) > 500) {
-                  swipe(info.offset.x > 0 ? 1 : -1);
-                }
-              }}
-              initial={false}
-              animate={{
-                y: offset,
-                scale: 1 - stackPos * 0.04,
-                rotate: reduce ? 0 : rotate,
-                zIndex: POLAROIDS.length - stackPos,
-              }}
-              whileTap={isTop ? { scale: 0.98 } : undefined}
-              transition={{ type: "spring", stiffness: 220, damping: 24 }}
-              className={`absolute inset-0 select-none rounded-sm bg-white p-3 pb-14 shadow-[0_20px_60px_-15px_oklch(0_0_0/0.5)] ${
-                isTop ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"
-              }`}
-              style={{ touchAction: isTop ? "pan-y" : "none" }}
-            >
-              <div className="relative h-full w-full overflow-hidden rounded-sm bg-midnight/10">
-                <img
-                  src={POLAROIDS[idx].src}
-                  alt={POLAROIDS[idx].caption}
-                  loading="lazy"
-                  draggable={false}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <p className="absolute bottom-3 left-0 right-0 text-center font-script text-xl text-midnight">
-                {POLAROIDS[idx].caption}
-              </p>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      <div className="mt-8 text-center">
-        <button
-          onClick={() => swipe(1)}
-          className="rounded-full border border-champagne/40 bg-cream/10 px-5 py-2 font-sans text-sm text-cream backdrop-blur-md transition-colors hover:bg-cream/20"
-        >
-          Next polaroid →
-        </button>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- VIDEO HIGHLIGHT ---------- */
-function VideoHighlight() {
-  const [playing, setPlaying] = useState(false);
-  return (
-    <section className="relative overflow-hidden bg-midnight py-24 sm:py-32">
-      {[...Array(40)].map((_, i) => (
+      {/* Twinkling stars */}
+      {Array.from({ length: 36 }).map((_, i) => (
         <span
           key={i}
-          className="pointer-events-none absolute h-[2px] w-[2px] rounded-full bg-champagne animate-twinkle"
+          className="pointer-events-none absolute rounded-full bg-champagne/70 animate-twinkle"
           style={{
-            left: `${(i * 71) % 100}%`,
-            top: `${(i * 43) % 100}%`,
-            animationDelay: `${(i % 7) * 0.4}s`,
+            width: `${1 + (i % 2)}px`,
+            height: `${1 + (i % 2)}px`,
+            left: `${(i * 47) % 100}%`,
+            top: `${(i * 31) % 88}%`,
+            animationDelay: `${(i % 6) * 0.5}s`,
           }}
         />
       ))}
 
-      <div className="relative mx-auto max-w-4xl px-6 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
+      {/* Hero content */}
+      <motion.div
+        style={{ opacity: contentOpacity }}
+        className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-8 text-center"
+      >
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 1.3, ease: "easeOut" }}
+          className="mb-6 font-script text-xl text-champagne/80 sm:text-2xl"
+        >
+          a little something for
+        </motion.p>
+
+        <h1 className="flex flex-col items-center gap-1">
+          {words.map((w, i) => (
+            <motion.span
+              key={w.text}
+              className={`block leading-tight ${w.className}`}
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 1.0 + i * 0.8, duration: 1.1, ease: "easeOut" }}
+            >
+              {w.text}
+            </motion.span>
+          ))}
+        </h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4.3, duration: 1.5 }}
+          className="mt-10 max-w-[200px] font-sans text-xs leading-relaxed text-cream/55"
+        >
+          scroll through your memories below
+        </motion.p>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 5 }}
+        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+          className="flex h-8 w-5 items-start justify-center rounded-full border border-cream/25 pt-1.5"
+        >
+          <div className="h-2 w-[3px] rounded-full bg-cream/45" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GALLERY — 2-column masonry grid with all 22 media cards
+═══════════════════════════════════════════════════════════════════════════ */
+
+function Gallery() {
+  return (
+    <section className="bg-midnight px-2.5 pb-16 pt-10 sm:px-4 sm:pt-14">
+      <div className="mx-auto max-w-lg">
+        {/* Section heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="font-display text-4xl font-light text-cream sm:text-6xl"
+          className="mb-8 text-center"
         >
-          A Little <span className="font-script text-champagne">Montage</span>
-        </motion.h2>
-        <p className="mt-4 font-sans text-base text-cream/70 sm:text-lg">
-          Press play. Get cozy. This one's just for you.
-        </p>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="relative mx-auto mt-12 aspect-video w-full max-w-3xl overflow-hidden rounded-2xl border border-champagne/30 shadow-[0_0_80px_-10px_oklch(0.86_0.09_85/0.4)]"
-        >
-          {!playing ? (
-            <button onClick={() => setPlaying(true)} className="group relative block h-full w-full">
-              {/* REPLACE poster + the <video> src below with your montage */}
-              <img
-                src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80"
-                alt="Montage poster"
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-midnight/40 transition-colors group-hover:bg-midnight/30">
-                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-cream/90 shadow-2xl ring-1 ring-champagne/40 transition-transform group-hover:scale-110">
-                  <Play className="ml-1 h-9 w-9 fill-midnight text-midnight" />
-                </span>
-              </div>
-            </button>
-          ) : (
-            <video
-              src="https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4"
-              autoPlay
-              controls
-              playsInline
-              preload="metadata"
-              className="h-full w-full bg-black object-cover"
-            />
-          )}
-          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-champagne/20" />
+          <h2 className="font-display text-3xl font-light text-cream sm:text-4xl">
+            Your <span className="font-script text-blush">Memories</span>
+          </h2>
+          <p className="mt-2 font-sans text-[11px] tracking-widest text-cream/35">
+            tap any card to reveal a message 💌
+          </p>
         </motion.div>
+
+        {/* The grid */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+          {MEDIA.map((item, i) => (
+            <MediaCard key={i} item={item} index={i} />
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ---------- ENDING ---------- */
-function Ending() {
-  const fire = () => {
-    const burst = (origin: { x: number; y: number }) =>
-      confetti({
-        particleCount: 80,
-        spread: 90,
-        startVelocity: 45,
-        origin,
-        colors: ["#f9c5d1", "#d4b8e8", "#e8c97a", "#fff7e6"],
-        scalar: 1.1,
-      });
-    burst({ x: 0.2, y: 0.7 });
-    burst({ x: 0.5, y: 0.6 });
-    burst({ x: 0.8, y: 0.7 });
-    setTimeout(() => burst({ x: 0.5, y: 0.4 }), 250);
-  };
+/* ═══════════════════════════════════════════════════════════════════════════
+   CLOSING — Glow final message
+═══════════════════════════════════════════════════════════════════════════ */
 
+function Closing() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-midnight via-lavender/40 to-blush/40 py-32 sm:py-40">
-      <div className="mx-auto max-w-2xl px-6 text-center">
+    <section className="relative overflow-hidden bg-gradient-to-b from-midnight via-midnight to-blush/10 px-6 py-32 sm:py-44">
+      {/* Ambient radial glow */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background: "radial-gradient(circle, oklch(0.88 0.06 10 / 0.18) 0%, transparent 70%)",
+          filter: "blur(30px)",
+        }}
+      />
+
+      {/* Stars */}
+      {Array.from({ length: 22 }).map((_, i) => (
+        <span
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-champagne/60 animate-twinkle"
+          style={{
+            width: "2px",
+            height: "2px",
+            left: `${(i * 59) % 100}%`,
+            top: `${(i * 41) % 100}%`,
+            animationDelay: `${(i % 5) * 0.55}s`,
+          }}
+        />
+      ))}
+
+      <div className="relative mx-auto max-w-xs text-center">
         <motion.p
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 36 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1.5 }}
-          className="font-display text-3xl font-light leading-snug text-cream sm:text-5xl"
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 1.6, ease: "easeOut" }}
+          className="font-display text-2xl font-light leading-relaxed text-cream sm:text-3xl"
         >
-          Wishing you a birthday
-          <br />
-          as <em className="font-script text-champagne">beautiful</em> as you are.
+          Wishing you a{" "}
+          <em className="not-italic font-script text-3xl text-champagne animate-glow sm:text-4xl">
+            beautiful
+          </em>{" "}
+          year,
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.55, duration: 1.4, ease: "easeOut" }}
+          className="mt-2 font-script text-5xl text-blush sm:text-6xl"
+          style={{
+            textShadow:
+              "0 0 28px oklch(0.88 0.06 10 / 0.55), 0 0 56px oklch(0.88 0.06 10 / 0.28)",
+          }}
+        >
+          Prativa.
         </motion.p>
 
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.8, duration: 1.5 }}
-          className="mt-6 font-script text-2xl text-blush sm:text-3xl"
+          transition={{ delay: 1.3, duration: 1.5 }}
+          className="mt-10 font-script text-base text-cream/38"
         >
-          Keep shining, Prativa.
+          with all the love in the world ✨
         </motion.p>
-
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 1.4, duration: 1 }}
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.05 }}
-          onClick={fire}
-          className="group mt-12 inline-flex items-center gap-2 rounded-full border border-champagne/40 bg-cream/10 px-8 py-4 font-sans text-sm font-medium text-cream backdrop-blur-md transition-all hover:bg-cream/20 sm:text-base"
-        >
-          <Sparkles className="h-4 w-4 text-champagne transition-transform group-hover:rotate-12" />
-          Tap for a little magic
-        </motion.button>
-
-        <p className="mt-20 font-script text-base text-cream/60">with love, always 🤍</p>
       </div>
     </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ROOT PAGE
+═══════════════════════════════════════════════════════════════════════════ */
+
+function Index() {
+  return (
+    <main className="overflow-x-hidden bg-midnight text-cream">
+      <Hero />
+      <Gallery />
+      <Closing />
+    </main>
   );
 }
