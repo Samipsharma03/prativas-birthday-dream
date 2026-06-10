@@ -68,6 +68,8 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
               id="envelope_form"
               className="envelope-form relative overflow-hidden"
               style={{
+                width: "100%",
+                paddingTop: "110%",
                 background: "linear-gradient(0deg, #c7c2c5 0%, #c7c2c5 55%, rgba(255,255,255,0) 55%)",
               }}
             >
