@@ -1,4 +1,4 @@
-@import "tailwindcss" source(none);
+@import "tailwindcss";
 @source "../src";
 @import "tw-animate-css";
 
@@ -164,24 +164,139 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(3deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(3deg);
+  }
 }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 @keyframes glow-pulse {
-  0%, 100% { text-shadow: 0 0 20px oklch(0.86 0.09 85 / 0.6), 0 0 40px oklch(0.88 0.06 10 / 0.4); }
-  50% { text-shadow: 0 0 30px oklch(0.86 0.09 85 / 0.9), 0 0 60px oklch(0.88 0.06 10 / 0.6); }
+  0%,
+  100% {
+    text-shadow:
+      0 0 20px oklch(0.86 0.09 85 / 0.6),
+      0 0 40px oklch(0.88 0.06 10 / 0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 30px oklch(0.86 0.09 85 / 0.9),
+      0 0 60px oklch(0.88 0.06 10 / 0.6);
+  }
 }
 @keyframes bounce-soft {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
 }
 
-.animate-float { animation: float 6s ease-in-out infinite; }
-.animate-twinkle { animation: twinkle 3s ease-in-out infinite; }
-.animate-glow { animation: glow-pulse 3s ease-in-out infinite; }
-.animate-bounce-soft { animation: bounce-soft 2s ease-in-out infinite; }
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+.animate-glow {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+.animate-bounce-soft {
+  animation: bounce-soft 2s ease-in-out infinite;
+}
 
+@keyframes cta-sheen {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tree-aurora {
+  0%,
+  100% {
+    transform: translateX(-5%) rotate(-2deg) scale(1.05);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateX(5%) rotate(2deg) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes tree-vortex-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes tree-moon-heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  8% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  16% {
+    transform: scale(1.04);
+    opacity: 0.85;
+  }
+  24% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  36% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+}
+
+@keyframes tree-shimmer {
+  0% {
+    stop-color: oklch(0.55 0.04 60);
+  }
+  50% {
+    stop-color: oklch(0.68 0.08 55);
+  }
+  100% {
+    stop-color: oklch(0.55 0.04 60);
+  }
+}
+
+.tree-aurora-layer {
+  animation: tree-aurora 18s ease-in-out infinite;
+}
+
+.tree-vortex-ring {
+  animation: tree-vortex-spin 2.4s linear infinite;
+}
+
+.tree-moon-pulse {
+  animation: tree-moon-heartbeat 2.8s ease-in-out infinite;
+  transform-origin: 78px 22px;
+}

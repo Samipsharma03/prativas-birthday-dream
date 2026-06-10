@@ -12,9 +12,8 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
  *     /public/images and /public/videos).
  *   • A luxurious, premium CTA section at the bottom with a glassmorphism
  *     box, a pulsing heart icon and a stylized "Unlock Our Next Chapter"
- *     button. Clicking it dispatches the `bg-music-fade-out` event so
- *     BackgroundMusic can fade + unmount, then calls `onUnlock` so the
- *     parent can transition to step 2.
+ *     button. Clicking it calls `onUnlock` to transition to step 2 while
+ *     background music continues uninterrupted.
  */
 
 interface GalleryStepProps {
@@ -476,13 +475,11 @@ function UnlockCta({ onUnlock }: { onUnlock: () => void }) {
     if (isUnlocking) return;
     setIsUnlocking(true);
 
-    // 1. Tell BackgroundMusic to fade out + tear down.
-    window.dispatchEvent(new Event("bg-music-fade-out"));
-
-    // 2. After the 1.5s fade-out, hand off to step 2.
+    // Music keeps playing — BackgroundMusic stays mounted through the letter step
+    // and only fades out when the final video begins.
     window.setTimeout(() => {
       onUnlock();
-    }, 1500);
+    }, 600);
   };
 
   return (
