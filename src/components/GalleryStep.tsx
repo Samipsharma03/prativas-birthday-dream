@@ -1,0 +1,644 @@
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+
+/**
+ * GalleryStep
+ * -----------
+ * Step 1 of the journey — "The Memory Lane".
+ *
+ * Contains:
+ *   • A parallax Hero with one-word-at-a-time reveal.
+ *   • The 35-card masonry gallery of gifts (auto-discovered from
+ *     /public/images and /public/videos).
+ *   • A luxurious, premium CTA section at the bottom with a glassmorphism
+ *     box, a pulsing heart icon and a stylized "Unlock Our Next Chapter"
+ *     button. Clicking it dispatches the `bg-music-fade-out` event so
+ *     BackgroundMusic can fade + unmount, then calls `onUnlock` so the
+ *     parent can transition to step 2.
+ */
+
+interface GalleryStepProps {
+  onUnlock: () => void;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AUTO-DISCOVERY
+   The gallery auto-discovers files in /public/images/ and /public/videos/.
+   Drop a `gallery-XX.jpg` (or .png/.webp) into /public/images/ or a
+   `gallery-XX.mp4` into /public/videos/ and it appears automatically.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+interface MediaItem {
+  type: "image" | "video";
+  src: string;
+  poster?: string;
+  message: string;
+  wide: boolean;
+}
+
+const IMAGE_FILES = import.meta.glob("/public/images/gallery-*", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>;
+
+const VIDEO_FILES = import.meta.glob("/public/videos/gallery-*", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>;
+
+function extractSlot(path: string): string | null {
+  const m = /gallery-(\d+)\./i.exec(path);
+  return m ? m[1] : null;
+}
+
+const imageBySlot: Record<string, string> = {};
+for (const [path, url] of Object.entries(IMAGE_FILES)) {
+  const slot = extractSlot(path);
+  if (slot) imageBySlot[slot] = url;
+}
+
+const videoBySlot: Record<string, string> = {};
+for (const [path, url] of Object.entries(VIDEO_FILES)) {
+  const slot = extractSlot(path);
+  if (slot) videoBySlot[slot] = url;
+}
+
+const ALL_SLOTS = Array.from(
+  new Set([...Object.keys(imageBySlot), ...Object.keys(videoBySlot)]),
+).sort((a, b) => Number(a) - Number(b));
+
+/* Per-slot customisation. */
+const SLOT_META: Record<string, { message?: string; wide?: boolean }> = {
+  "01": { wide: true },
+  "06": { wide: true },
+  "09": { wide: true },
+  "10": { message: "You deserve all the happiness in the universe." },
+  "11": { wide: false },
+  "15": { wide: true },
+  "18": { message: "May this year bring you everything your heart desires." },
+  "21": { wide: true },
+};
+
+const PRATIVA_MESSAGES = [
+  "In a world full of temporary things, you are my forever constant. ✨",
+  "Your laughter is the most comforting melody my heart has ever known. 🤍",
+  "Sometimes I look at you and wonder how one single soul can hold so much grace.",
+  "You don't just occupy space in my life, Prativa; you make the entire world softer and warmer.",
+  "Every quiet memory with you is a treasure I keep locked in the deepest corners of my mind.",
+  "You have this rare, magical ability to heal the world around you just by existing in it. 🌸",
+  "With you, the loudest storms inside my head turn into the calmest, most peaceful seas.",
+  "If I could give you one gift, it would be the ability to see yourself through my eyes.",
+  "You are my favorite thought at the dawn of the day and my safest prayer before I sleep.",
+  "There is a profound kind of peace that washes over me the moment I see your genuine smile.",
+  "You are the beautiful poetry written between the lines of my otherwise ordinary days. 📜",
+  "No matter where life takes us, my heart will always know the exact path back to you.",
+  "Your kindness isn't loud, Prativa, but it echoes deeply in the hearts of everyone lucky enough to know you.",
+  "I didn't know what it truly felt like to be completely anchored until you walked into my world.",
+  "Of all the versions of myself I've ever been, the one that loves you is my absolute favorite. 💫",
+  "Your presence feels like a warm cup of tea on a rainy afternoon—perfect, comforting, and necessary.",
+  "The universe spent billions of years creating everything, but you are its absolute masterpiece.",
+  "Even on the days when the dark clouds roll in, your light breaks through effortlessly.",
+  "You have taught me that love isn't just a feeling; it's a safe place, and that place is you. 🏡",
+  "Every single detail about you—your quirks, your gentle heart, your strength—is worth celebrating.",
+  "When I count the blessings that make life beautiful, I count you a thousand times over.",
+  "You are the silent reassurance that everything is going to be okay, no matter how chaotic life gets.",
+  "A life shared with you is a beautiful story I never, ever want to finish reading. 📖",
+  "You possess a quiet, fierce strength that leaves me in absolute awe every single time.",
+  "Loving you is as natural as breathing, and just as vital to my existence. 🫁❤️",
+  "You are my home, Prativa. Not a place, but a person. A soul I always want to rest next to.",
+  "There is a deep warmth in your eyes that can instantly melt away the heaviest burdens of a long day.",
+  "If my life were a canvas, you would be the brightest, most breathtaking colors painted on it. 🎨",
+  "Thank you for being the only person who understands the words I never manage to say out loud.",
+  "You make the ordinary, mundane moments feel like absolute magic, just by sharing them.",
+  "You are my sanctuary, my greatest adventure, and my sweetest reality all wrapped into one. 🌌",
+  "The depth of your heart is a beautiful mystery I want to spend the rest of my life exploring.",
+  "You make me believe in the kind of pure goodness that this world so desperately needs.",
+  "Every single heartbeat of mine carries a quiet thank you for the day you entered my life.",
+  "You are my sun on the darkest days, my moon when the night is long, and my absolute everything. ☀️🌙",
+];
+
+const messageForIndex = (index: number, slot: string): string => {
+  const explicit = SLOT_META[slot]?.message;
+  if (explicit) return explicit;
+  return PRATIVA_MESSAGES[index % PRATIVA_MESSAGES.length];
+};
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=900&q=80";
+const FALLBACK_POSTER =
+  "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=900&q=80";
+
+const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
+  const num = Number(slot);
+  const videoUrl = videoBySlot[slot];
+  const imageUrl = imageBySlot[slot];
+
+  if (videoUrl) {
+    return {
+      type: "video",
+      src: videoUrl,
+      poster: imageUrl ?? FALLBACK_POSTER,
+      message: messageForIndex(index, slot),
+      wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
+    };
+  }
+
+  return {
+    type: "image",
+    src: imageUrl ?? FALLBACK_IMAGE,
+    message: messageForIndex(index, slot),
+    wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
+  };
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GIFT CARD
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function GiftCard({ item, index }: { item: MediaItem; index: number }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const prefersReduced = useReducedMotion();
+
+  const isFlippedRef = useRef(false);
+  isFlippedRef.current = isFlipped;
+
+  useEffect(() => {
+    if (item.type !== "video") return;
+    const el = cardRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVideoSrc(item.src);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "500px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [item.type, item.src]);
+
+  useEffect(() => {
+    if (item.type !== "video") return;
+    const video = videoRef.current;
+    if (!video) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        const nowVisible = entry.intersectionRatio >= 0.5;
+        setIsVisible(nowVisible);
+        if (nowVisible && !isFlippedRef.current) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    obs.observe(video);
+    return () => obs.disconnect();
+  }, [item.type]);
+
+  useEffect(() => {
+    if (videoSrc && isVisible && !isFlippedRef.current) {
+      videoRef.current?.play().catch(() => {});
+    }
+  }, [videoSrc, isVisible]);
+
+  useEffect(() => {
+    if (item.type !== "video") return;
+    if (isFlipped) {
+      videoRef.current?.pause();
+    } else if (isVisible && videoSrc) {
+      videoRef.current?.play().catch(() => {});
+    }
+  }, [isFlipped, item.type, isVisible, videoSrc]);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className="mb-2 break-inside-avoid cursor-pointer"
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-25px" }}
+      transition={{ duration: 0.55, delay: (index % 4) * 0.07, ease: "easeOut" }}
+      onClick={() => setIsFlipped((f) => !f)}
+      style={{ perspective: "1200px" }}
+    >
+      <motion.div
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        transition={{ duration: prefersReduced ? 0 : 0.6, ease: [0.23, 1, 0.32, 1] }}
+        className="relative w-full"
+        style={
+          {
+            transformStyle: "preserve-3d",
+            WebkitTransformStyle: "preserve-3d",
+          } as React.CSSProperties
+        }
+      >
+        {/* FRONT */}
+        <div
+          className="relative rounded-2xl overflow-hidden"
+          style={
+            {
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+            } as React.CSSProperties
+          }
+        >
+          {item.type === "image" ? (
+            <img
+              src={item.src}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="w-full h-auto object-cover"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              src={videoSrc ?? undefined}
+              poster={item.poster}
+              muted
+              loop
+              playsInline
+              preload="none"
+              className="w-full h-auto object-cover bg-midnight"
+            />
+          )}
+
+          <div className="absolute inset-0 bg-gradient-to-t from-midnight/50 via-transparent to-transparent pointer-events-none" />
+
+          <div className="absolute bottom-2 right-2 pointer-events-none">
+            <span className="inline-flex items-center gap-1 rounded-full bg-midnight/65 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-cream/65">
+              <svg
+                className="w-3 h-3 text-champagne/70"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 9V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3m18 0v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9m18 0h-2M3 9h2m0 0h14M5 9V4m14 5V4"
+                />
+              </svg>
+              tap
+            </span>
+          </div>
+        </div>
+
+        {/* BACK */}
+        <div
+          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2.5 px-4 py-5 text-center min-h-[120px]"
+          style={
+            {
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+              background: "oklch(0.16 0.09 280 / 0.95)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              border: "1px solid oklch(0.86 0.09 85 / 0.20)",
+            } as React.CSSProperties
+          }
+        >
+          <span className="font-sans text-[9px] tracking-[0.2em] text-champagne/55 uppercase">
+            a gift for you ✦
+          </span>
+          <p className="font-script text-lg leading-snug text-cream sm:text-xl">{item.message}</p>
+          <span className="font-sans text-[8px] text-cream/25 mt-0.5">tap to close</span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "38%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
+  const words: { text: string; className: string }[] = [
+    {
+      text: "Happy.",
+      className: "font-display font-light text-cream tracking-tight text-5xl sm:text-6xl",
+    },
+    {
+      text: "Birthday.",
+      className: "font-display font-light text-cream tracking-tight text-5xl sm:text-6xl",
+    },
+    {
+      text: "Prativa.",
+      className: "font-script text-blush text-6xl sm:text-7xl",
+    },
+  ];
+
+  return (
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden">
+      <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
+        <img
+          src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80"
+          alt=""
+          loading="eager"
+          className="h-[135%] w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-midnight/65 via-midnight/30 to-midnight" />
+      </motion.div>
+
+      {Array.from({ length: 36 }).map((_, i) => (
+        <span
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-champagne/70 animate-twinkle"
+          style={{
+            width: `${1 + (i % 2)}px`,
+            height: `${1 + (i % 2)}px`,
+            left: `${(i * 47) % 100}%`,
+            top: `${(i * 31) % 88}%`,
+            animationDelay: `${(i % 6) * 0.5}s`,
+          }}
+        />
+      ))}
+
+      <motion.div
+        style={{ opacity: contentOpacity }}
+        className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-8 text-center"
+      >
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 1.3, ease: "easeOut" }}
+          className="mb-6 font-script text-xl text-champagne/80 sm:text-2xl"
+        >
+          a little something for
+        </motion.p>
+
+        <h1 className="flex flex-col items-center gap-1">
+          {words.map((w, i) => (
+            <motion.span
+              key={w.text}
+              className={`block leading-tight ${w.className}`}
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 1.0 + i * 0.8, duration: 1.1, ease: "easeOut" }}
+            >
+              {w.text}
+            </motion.span>
+          ))}
+        </h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4.3, duration: 1.5 }}
+          className="mt-10 max-w-[200px] font-sans text-xs leading-relaxed text-cream/55"
+        >
+          scroll through your memories below
+        </motion.p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 5 }}
+        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+          className="flex h-8 w-5 items-start justify-center rounded-full border border-cream/25 pt-1.5"
+        >
+          <div className="h-2 w-[3px] rounded-full bg-cream/45" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GALLERY
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function Gallery() {
+  return (
+    <section className="bg-midnight px-2.5 pb-10 pt-10 sm:px-4 sm:pt-14">
+      <div className="mx-auto max-w-lg">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="mb-8 text-center"
+        >
+          <h2 className="font-display text-3xl font-light text-cream sm:text-4xl">
+            Your <span className="font-script text-blush">Memories</span>
+          </h2>
+          <p className="mt-2 font-sans text-[11px] tracking-widest text-cream/35">
+            tap any gift to reveal a message 💌
+          </p>
+        </motion.div>
+
+        <div className="columns-2 gap-2 sm:gap-2.5">
+          {MEDIA.map((item, i) => (
+            <GiftCard key={i} item={item} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UNLOCK CTA — luxurious glassmorphism "Unlock Our Next Chapter"
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function UnlockCta({ onUnlock }: { onUnlock: () => void }) {
+  const [isUnlocking, setIsUnlocking] = useState(false);
+
+  const handleClick = () => {
+    if (isUnlocking) return;
+    setIsUnlocking(true);
+
+    // 1. Tell BackgroundMusic to fade out + tear down.
+    window.dispatchEvent(new Event("bg-music-fade-out"));
+
+    // 2. After the 1.5s fade-out, hand off to step 2.
+    window.setTimeout(() => {
+      onUnlock();
+    }, 1500);
+  };
+
+  return (
+    <section className="relative overflow-hidden bg-midnight px-4 pb-24 pt-16 sm:pb-32 sm:pt-20">
+      {/* Ambient radial glow */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background: "radial-gradient(circle, oklch(0.88 0.06 10 / 0.18) 0%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+      />
+
+      {/* Twinkling stars */}
+      {Array.from({ length: 28 }).map((_, i) => (
+        <span
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-champagne/55 animate-twinkle"
+          style={{
+            width: `${1 + (i % 2)}px`,
+            height: `${1 + (i % 2)}px`,
+            left: `${(i * 53) % 100}%`,
+            top: `${(i * 37) % 100}%`,
+            animationDelay: `${(i % 5) * 0.5}s`,
+          }}
+        />
+      ))}
+
+      <div className="relative mx-auto max-w-md">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="relative rounded-3xl border border-champagne/20 bg-cream/[0.04] px-6 py-10 text-center backdrop-blur-xl sm:px-10 sm:py-14"
+          style={{
+            boxShadow:
+              "0 30px 80px -20px oklch(0.88 0.06 10 / 0.18), inset 0 1px 0 oklch(0.98 0.02 80 / 0.08)",
+          }}
+        >
+          {/* Subtle inner gradient ring */}
+          <div
+            className="pointer-events-none absolute inset-0 rounded-3xl"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, oklch(0.86 0.09 85 / 0.10) 0%, transparent 60%)",
+            }}
+          />
+
+          <span className="font-sans text-[10px] tracking-[0.4em] text-champagne/55 uppercase">
+            ✦ one last thing ✦
+          </span>
+
+          {/* Pulsing heart icon */}
+          <div className="mt-5 flex items-center justify-center">
+            <motion.div
+              animate={{ scale: [1, 1.12, 1] }}
+              transition={{
+                repeat: Infinity,
+                duration: 1.6,
+                ease: "easeInOut",
+              }}
+              className="relative flex h-16 w-16 items-center justify-center"
+            >
+              <span
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle, oklch(0.72 0.22 18 / 0.45) 0%, transparent 70%)",
+                  filter: "blur(8px)",
+                }}
+              />
+              <svg
+                className="relative h-10 w-10"
+                viewBox="0 0 24 24"
+                fill="oklch(0.68 0.24 18)"
+                aria-hidden
+              >
+                <path d="M12 21s-7-4.5-9.5-9.5C1 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z" />
+              </svg>
+            </motion.div>
+          </div>
+
+          <h3 className="mt-4 font-display text-2xl font-light leading-snug text-cream sm:text-3xl">
+            And now…
+            <br />
+            <span className="font-script text-blush">the next chapter</span> awaits.
+          </h3>
+
+          <p className="mx-auto mt-3 max-w-xs font-sans text-[11px] leading-relaxed text-cream/55">
+            There's one more thing I've been growing for you. Ready to see it bloom?
+          </p>
+
+          <motion.button
+            type="button"
+            onClick={handleClick}
+            disabled={isUnlocking}
+            whileHover={{ scale: isUnlocking ? 1 : 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="group relative mt-8 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3 font-sans text-[11px] tracking-[0.32em] text-cream uppercase disabled:opacity-70"
+            style={{
+              background:
+                "linear-gradient(120deg, oklch(0.68 0.20 18) 0%, oklch(0.78 0.16 8) 45%, oklch(0.86 0.09 85) 100%)",
+              boxShadow:
+                "0 12px 40px -8px oklch(0.68 0.22 18 / 0.55), inset 0 1px 0 oklch(0.98 0.02 80 / 0.35)",
+            }}
+          >
+            {/* Sheen */}
+            <span
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(110deg, transparent 25%, oklch(0.98 0.02 80 / 0.35) 50%, transparent 75%)",
+                transform: "translateX(-100%)",
+                animation: isUnlocking ? "none" : "cta-sheen 3.4s ease-in-out infinite",
+              }}
+            />
+            <span className="relative">
+              {isUnlocking ? "preparing…" : "Unlock Our Next Chapter"}
+            </span>
+            {!isUnlocking && (
+              <svg
+                className="relative h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-5-5l5 5-5 5" />
+              </svg>
+            )}
+          </motion.button>
+
+          <p className="mt-5 font-sans text-[9px] tracking-[0.3em] text-cream/25 uppercase">
+            ✦ for prativa, with love ✦
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GALLERY STEP — composes Hero + Gallery + CTA. The page-level route owns
+   the currentStep state and the BackgroundMusic lifecycle.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export function GalleryStep({ onUnlock }: GalleryStepProps) {
+  return (
+    <div className="relative">
+      <Hero />
+      <Gallery />
+      <UnlockCta onUnlock={onUnlock} />
+    </div>
+  );
+}
+
+export default GalleryStep;
