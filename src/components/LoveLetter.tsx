@@ -10,14 +10,11 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
   const [letterVisible, setLetterVisible] = useState(false);
   const [showingVideo, setShowingVideo] = useState(false);
-  const [bgMusicFaded, setBgMusicFaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeFrameRef = useRef<number | null>(null);
 
-  // Setup background music that plays while envelope is closed
+  // Setup background music that plays while envelope is visible
   useEffect(() => {
-    if (envelopeOpen || bgMusicFaded) return;
-
     const audio = new Audio("/memories/bg-music.mp3");
     audio.loop = true;
     audio.volume = 0.25;
@@ -43,14 +40,13 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
         audioRef.current.src = "";
       }
     };
-  }, [envelopeOpen, bgMusicFaded]);
+  }, []);
 
   // Fade out and stop background music
   const fadeOutMusic = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    setBgMusicFaded(true);
     const startVolume = audio.volume;
     const startTime = performance.now();
     const durationMs = 1500;
@@ -89,6 +85,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
     setLetterVisible(false);
     setTimeout(() => {
       setShowingVideo(true);
+      onOpenComplete?.();
     }, 300);
   };
 
@@ -104,7 +101,10 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
             className="flex min-h-screen items-center justify-center p-4"
           >
             <div className="relative w-full max-w-sm sm:max-w-md">
-              <div className="relative mx-auto h-64 w-80 sm:h-80 sm:w-96" style={{ perspective: "1000px" }}>
+              <div
+                className="relative mx-auto h-64 w-80 sm:h-80 sm:w-96"
+                style={{ perspective: "1000px" }}
+              >
                 {/* Envelope Flap - flips open on click */}
                 <motion.div
                   className="absolute inset-x-0 top-0 origin-bottom"
@@ -144,7 +144,11 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                         transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
                         className="flex h-full w-full items-center justify-center"
                       >
-                        <svg viewBox="0 0 24 24" className="h-7 w-7 text-champagne" fill="currentColor">
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="h-7 w-7 text-champagne"
+                          fill="currentColor"
+                        >
                           <path d="M12 21s-7-4.5-9.5-9.5C1 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z" />
                         </svg>
                       </motion.div>
@@ -157,7 +161,8 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                 <div
                   className="absolute inset-x-0 bottom-0 h-1/2 rounded-b-xl"
                   style={{
-                    background: "linear-gradient(135deg, oklch(0.96 0.02 85) 0%, oklch(0.92 0.03 85) 100%)",
+                    background:
+                      "linear-gradient(135deg, oklch(0.96 0.02 85) 0%, oklch(0.92 0.03 85) 100%)",
                     border: "1px solid oklch(0.85 0.15 85 / 0.3)",
                     boxShadow: "0 12px 40px -10px oklch(0 0 0 / 0.5)",
                   }}
@@ -178,7 +183,8 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                       className="rounded-xl p-6 sm:p-8"
                       style={{
                         background: "oklch(0.98 0.02 85)",
-                        boxShadow: "0 20px 60px -10px oklch(0 0 0 / 0.6), inset 0 1px 0 oklch(0.9 0.05 85 / 0.5)",
+                        boxShadow:
+                          "0 20px 60px -10px oklch(0 0 0 / 0.6), inset 0 1px 0 oklch(0.9 0.05 85 / 0.5)",
                       }}
                     >
                       <div className="space-y-4 text-center">
@@ -195,7 +201,10 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
 
                         <motion.button
                           onClick={handleWatchVideo}
-                          whileHover={{ scale: 1.03, boxShadow: "0 12px 35px -5px oklch(0.72 0.22 18 / 0.5)" }}
+                          whileHover={{
+                            scale: 1.03,
+                            boxShadow: "0 12px 35px -5px oklch(0.72 0.22 18 / 0.5)",
+                          }}
                           whileTap={{ scale: 0.97 }}
                           className="mt-6 inline-flex items-center justify-center rounded-full px-8 py-3 font-sans text-sm tracking-widest text-cream uppercase transition-shadow"
                           style={{
@@ -224,12 +233,6 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0 }}
             transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-            onAnimationComplete={() => {
-              const video = document.querySelector("video");
-              if (video instanceof HTMLVideoElement) {
-                video.play().catch(() => {});
-              }
-            }}
           >
             <FinalVideoTheaterWithAsset onClose={() => setShowingVideo(false)} />
           </motion.div>

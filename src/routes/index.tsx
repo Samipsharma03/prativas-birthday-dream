@@ -59,7 +59,6 @@ function collectAssetUrls(): string[] {
 function Index() {
   const [currentStep, setCurrentStep] = useState<Step>("gallery");
   const goToLetter = useCallback(() => setCurrentStep("letter"), []);
-  const goToGallery = useCallback(() => setCurrentStep("gallery"), []);
   const preloadUrls = useMemo(() => collectAssetUrls(), []);
   const { isReady: assetsReady, progress } = useAssetPreload(preloadUrls, 900);
 
@@ -80,7 +79,7 @@ function Index() {
               <GalleryStep onUnlock={goToLetter} />
             </motion.section>
           )}
-          {currentStep === "letter" && <LoveLetter key="letter" onOpenComplete={() => {}} />}
+          {currentStep === "letter" && <LoveLetter key="letter" />}
         </AnimatePresence>
       </main>
       <PageLoader isLoading={!assetsReady} progress={progress} />

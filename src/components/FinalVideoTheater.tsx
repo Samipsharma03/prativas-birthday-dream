@@ -4,32 +4,16 @@ import { motion } from "framer-motion";
 /**
  * FinalVideoTheater
  * -----------------
- * Step 3 of the journey: a full-viewport, dark, cinematic video player
- * overlay. Mounted only AFTER the background music has been completely
- * stopped in Step 1 AND the tree in step 2 has finished blooming, so the
- * video plays its native sound with absolute clarity — zero overlap.
- *
- * The video plays un-muted straight away (no tap-to-enable-sound gate).
- * Browsers that block unprompted autoplay-with-sound will simply show the
- * little ▶ restart/close UI; the user can still hit play to enable audio.
- *
- * A tiny elegant close / restart button sits at the top-right corner.
- *   • "Restart"  → plays the video from the beginning.
- *   • "Close"    → returns to the start of the journey (currentStep =
- *                  'gallery') so she can relive everything.
+ * Cinematic full-viewport video player. Background music has already
+ * faded out before this mounts. The video plays unmuted immediately.
  */
 
 interface FinalVideoTheaterProps {
-  /** Source URL of the final video. */
   videoSrc: string;
-  /** Optional poster image. */
   posterSrc?: string;
-  /** Called when the user wants to return to the beginning. */
   onClose: () => void;
 }
 
-/* Auto-discover the final video and its poster at build time. The poster
-   is a sibling jpg/png/webp with the same basename as the video. */
 const FINAL_VIDEO_GLOB = import.meta.glob("/public/videos/final.*", {
   eager: true,
   query: "?url",
@@ -37,7 +21,6 @@ const FINAL_VIDEO_GLOB = import.meta.glob("/public/videos/final.*", {
 }) as Record<string, string>;
 
 const resolveFinalAsset = (): { src: string; poster: string | null } | null => {
-  // Prefer mp4, then webm, then anything else.
   const entries = Object.entries(FINAL_VIDEO_GLOB);
   if (entries.length === 0) return null;
 
@@ -50,9 +33,8 @@ const resolveFinalAsset = (): { src: string; poster: string | null } | null => {
   const [videoPath, videoUrl] = sorted[0];
   const base = videoPath.replace(/\.[^.]+$/, "");
 
-  // Try the most common poster extensions in the same directory.
   const posterCandidates = [".jpg", ".jpeg", ".png", ".webp"];
-  const posterUrl = posterCandidates.map((ext) => `${base}${ext}`).find((p) => FINAL_VIDEO_GLOB[p]); // re-using the glob as a "does-it-exist" cache
+  const posterUrl = posterCandidates.map((ext) => `${base}${ext}`).find((p) => FINAL_VIDEO_GLOB[p]);
 
   return {
     src: videoUrl,
@@ -63,13 +45,9 @@ const resolveFinalAsset = (): { src: string; poster: string | null } | null => {
 export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTheaterProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const [playbackKey, setPlaybackKey] = useState(0);
-  const [needsUserGesture, setNeedsUserGesture] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Try to autoplay (UNMUTED) immediately. If the browser blocks unmuted
-  // autoplay, we fall back to a single tap-to-play with sound. This keeps
-  // the experience seamless on every browser.
+  // Autoplay unmuted immediately on mount
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -80,17 +58,15 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
         .then(() => {
           setHasStarted(true);
           setIsPlaying(true);
-          setNeedsUserGesture(false);
         })
-        .catch(() => {
-          // Autoplay-with-sound was blocked. Fall back to a single
-          // tap-anywhere-to-enable-sound overlay.
-          setNeedsUserGesture(true);
-        });
+        .catch(() => {});
+    } else {
+      setHasStarted(true);
+      setIsPlaying(true);
     }
-  }, [playbackKey]);
+  }, []);
 
-  // Wire up play/pause/ended to keep state in sync.
+  // Wire up play/pause/ended events
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -107,29 +83,11 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
     };
   }, []);
 
-  // Fallback path: when unmuted autoplay was blocked, the first user
-  // gesture enables sound + plays.
-  const handleEnableSound = () => {
+  const handleRestart = () => {
     const video = videoRef.current;
     if (!video) return;
-    video.muted = false;
     video.currentTime = 0;
-    const r = video.play();
-    if (r && typeof r.then === "function") {
-      r.then(() => {
-        setHasStarted(true);
-        setIsPlaying(true);
-        setNeedsUserGesture(false);
-      }).catch(() => {});
-    } else {
-      setHasStarted(true);
-      setIsPlaying(true);
-      setNeedsUserGesture(false);
-    }
-  };
-
-  const handleRestart = () => {
-    setPlaybackKey((k) => k + 1);
+    video.play().catch(() => {});
   };
 
   return (
@@ -141,7 +99,6 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
       transition={{ duration: 1, ease: "easeInOut" }}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black"
     >
-      {/* Subtle cinematic vignette */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -149,7 +106,6 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
         }}
       />
 
-      {/* The video itself */}
       <motion.div
         initial={{ scale: 0.96, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -158,25 +114,25 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
       >
         <video
           ref={videoRef}
-          key={playbackKey}
           src={videoSrc}
           poster={posterSrc}
           playsInline
-          autoPlay
-          // Unmuted: the video should play with its native sound. If the
-          // browser blocks it, we show a small tap-to-play overlay as a
-          // graceful fallback.
+          preload="metadata"
           muted={false}
           className="h-full w-full object-contain"
         />
       </motion.div>
 
-      {/* Fallback tap-to-play overlay — only shown if the browser blocked
-          unmuted autoplay. Single click enables sound and starts. */}
-      {needsUserGesture && !hasStarted && (
+      {!hasStarted && (
         <motion.button
           type="button"
-          onClick={handleEnableSound}
+          onClick={() => {
+            const video = videoRef.current;
+            if (video) {
+              video.muted = false;
+              video.play().catch(() => {});
+            }
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -201,7 +157,6 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
         </motion.button>
       )}
 
-      {/* Top-corner close + restart buttons */}
       <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
         <button
           type="button"
@@ -241,7 +196,6 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
         </button>
       </div>
 
-      {/* Subtle play/pause indicator in the bottom corner. */}
       <div className="pointer-events-none absolute bottom-4 left-4 z-20">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-cream/10 bg-black/30 px-2.5 py-1 font-sans text-[9px] tracking-[0.3em] text-cream/45 uppercase backdrop-blur-sm">
           <span
@@ -258,8 +212,6 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
   );
 }
 
-/* Default export wraps the asset lookup so the route component stays
-   tidy. */
 export function FinalVideoTheaterWithAsset({ onClose }: { onClose: () => void }) {
   const asset = resolveFinalAsset();
   const finalSrc =
