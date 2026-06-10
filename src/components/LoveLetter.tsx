@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FinalVideoTheaterWithAsset } from "./FinalVideoTheater";
+import { FinalMessage } from "./FinalMessage";
 
 interface LoveLetterProps {
   onOpenComplete?: () => void;
@@ -10,6 +11,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
   const [letterVisible, setLetterVisible] = useState(false);
   const [showingVideo, setShowingVideo] = useState(false);
+  const [showFinalMessage, setShowFinalMessage] = useState(false);
 
   const handleSealClick = () => {
     if (envelopeOpen) return;
@@ -32,76 +34,233 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
     }, 300);
   };
 
+  const handleVideoEnded = () => {
+    setShowingVideo(false);
+    setShowFinalMessage(true);
+  };
+
+  const handleVideoClose = () => {
+    setShowingVideo(false);
+  };
+
+  const handleReplayFinal = () => {
+    setShowFinalMessage(false);
+    // Wait for the exit animation, then re-open the envelope
+    setTimeout(() => {
+      setEnvelopeOpen(false);
+      setLetterVisible(false);
+      setShowingVideo(false);
+      setShowFinalMessage(false);
+    }, 600);
+  };
+
   return (
     <section
-      className="relative flex min-h-screen items-center justify-center overflow-hidden p-4"
+      className="relative min-h-screen w-full overflow-hidden"
       style={{
         background: "linear-gradient(20deg, rgba(0,31,73,1) 0%, rgba(46,30,66,1) 100%)",
       }}
     >
-      {/* Ambient backdrop glow */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(120,80,200,0.15) 0%, transparent 70%)",
-        }}
-      />
-
-      <AnimatePresence>
-        {!showingVideo && (
+      <AnimatePresence mode="wait">
+        {/* ENVELOPE STAGE */}
+        {!showingVideo && !showFinalMessage && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.6, ease: "anticipate" }}
-            className="relative w-full max-w-md"
+            key="envelope-stage"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="relative flex min-h-screen items-center justify-center p-4"
           >
-            {/* Thank you message - appears after envelope flies away */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-center text-lg font-medium text-champagne" style={{ opacity: 0 }}>
-                💌 Your surprise is ready!
-              </p>
-            </div>
-
+            {/* Ambient backdrop glow */}
             <div
-              id="envelope_form"
-              className="envelope-form relative overflow-hidden"
+              className="pointer-events-none absolute inset-0"
               style={{
-                width: "100%",
-                paddingTop: "110%",
-                background: "linear-gradient(0deg, #c7c2c5 0%, #c7c2c5 55%, rgba(255,255,255,0) 55%)",
+                background:
+                  "radial-gradient(ellipse at center, rgba(120,80,200,0.15) 0%, transparent 70%)",
               }}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.6, ease: "anticipate" }}
+              className="relative w-full max-w-[340px]"
             >
-              {/* Envelope flap */}
-              <motion.div
-                className="env-top absolute top-[45%] z-50 w-full"
+              {/* Thank you message - appears after envelope flies away */}
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <p
+                  className="text-center text-base font-medium text-champagne"
+                  style={{ opacity: 0 }}
+                >
+                  💌 Your surprise is ready!
+                </p>
+              </div>
+
+              {/* Envelope Container - single cream rectangle, strict bounds for mobile */}
+              <div
+                id="envelope_form"
+                className="envelope-form relative w-full overflow-hidden rounded-2xl"
                 style={{
-                  height: "33%",
-                  filter: "drop-shadow(0px 6px 3px rgba(50, 50, 0, 0.1))",
-                  transformOrigin: "top",
+                  aspectRatio: "1 / 0.7",
+                  background: "#f4e8d8",
+                  boxShadow:
+                    "0 20px 60px -10px rgba(0,0,0,0.5), 0 8px 20px -5px rgba(0,0,0,0.3)",
                 }}
-                initial={{ rotateX: 0 }}
-                animate={{ rotateX: envelopeOpen ? -180 : 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut", delay: envelopeOpen ? 0 : 0.2 }}
-                onClick={!envelopeOpen ? handleSealClick : undefined}
               >
+                {/* LAYER 1 (z-10) - Envelope Body Background (single uniform cream rectangle) */}
                 <div
-                  className="absolute inset-0"
+                  className="env-back absolute inset-0 z-10"
                   style={{
-                    background: "white",
-                    clipPath: "polygon(50% 100%, 0 0, 100% 0)",
+                    background: "#f4e8d8",
                   }}
                 />
-                {/* Decorative wax seal heart on flap */}
+
+                {/* LAYER 2 (z-20) - Message / Letter Card - EMERGES from inside the envelope. */}
+                <AnimatePresence>
+                  {letterVisible && (
+                    <motion.div
+                      initial={{ y: "100%", scale: 0.94, opacity: 0.6 }}
+                      animate={{ y: "0%", scale: 1, opacity: 1 }}
+                      exit={{ y: "100%", scale: 0.96, opacity: 0 }}
+                      transition={{
+                        duration: 0.7,
+                        ease: [0.22, 0.9, 0.32, 1],
+                      }}
+                      className="env-letter absolute inset-x-0 bottom-0 z-20 flex items-center justify-center p-3 sm:p-4"
+                      style={{ height: "100%" }}
+                    >
+                      <div
+                        className="env-letter-card mx-auto flex w-[92%] flex-col items-center justify-center gap-3 rounded-xl p-4 text-center sm:gap-4 sm:p-5"
+                        style={{
+                          background: "#1e1938",
+                          color: "white",
+                          boxShadow:
+                            "0 10px 30px -5px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                        }}
+                      >
+                        <h3 className="text-sm font-medium leading-snug text-champagne sm:text-base">
+                          You have this incredibly rare, amazing energy that 
+                          just makes everything feel a 
+                          little brighter whenever you're around. 
+                          I don't think you even realize how much your 
+                          presence is appreciated, Prativa. Happy Birthday!
+                        </h3>
+
+                        <motion.button
+                          onClick={handleWatchVideo}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          className="inline-flex items-center justify-center rounded-full px-6 py-2.5 font-sans text-xs font-medium tracking-wider text-cream uppercase sm:text-sm"
+                          style={{
+                            background:
+                              "linear-gradient(125deg, oklch(0.68 0.22 18) 0%, oklch(0.75 0.20 18) 50%, oklch(0.82 0.15 85) 100%)",
+                            boxShadow:
+                              "0 8px 20px -5px oklch(0.68 0.22 18 / 0.4)",
+                          }}
+                        >
+                          Watch Your Video
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* LAYER 3 (z-30) - Front V-pocket drawn as SUBTLE STROKES (fold lines) */}
+                <svg
+                  className="env-front-pocket pointer-events-none absolute inset-0 z-30 h-full w-full"
+                  viewBox="0 0 100 70"
+                  preserveAspectRatio="none"
+                  aria-hidden
+                >
+                  <line
+                    x1="0"
+                    y1="70"
+                    x2="50"
+                    y2="35"
+                    stroke="rgba(120, 90, 50, 0.18)"
+                    strokeWidth="0.6"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <line
+                    x1="100"
+                    y1="70"
+                    x2="50"
+                    y2="35"
+                    stroke="rgba(120, 90, 50, 0.18)"
+                    strokeWidth="0.6"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </svg>
+
+                {/* LAYER 4 (z-40) - Top opening flap */}
+                <motion.div
+                  className="env-top absolute top-0 w-full"
+                  style={{
+                    zIndex: envelopeOpen ? 0 : 40,
+                    height: "50%",
+                    transformOrigin: "top center",
+                  }}
+                  initial={{ rotateX: 0 }}
+                  animate={{ rotateX: envelopeOpen ? -180 : 0 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: "easeInOut",
+                    delay: envelopeOpen ? 0 : 0.2,
+                  }}
+                  onClick={!envelopeOpen ? handleSealClick : undefined}
+                >
+                  <div
+                    className="env-top-inner h-full w-full"
+                    style={{
+                      background: "#f4e8d8",
+                      clipPath: "polygon(50% 100%, 0 0, 100% 0)",
+                      backfaceVisibility: "hidden",
+                      filter: "drop-shadow(0px 4px 6px rgba(120, 90, 50, 0.15))",
+                    }}
+                  />
+                  <svg
+                    className="pointer-events-none absolute inset-0 h-full w-full"
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    aria-hidden
+                    style={{ zIndex: 1 }}
+                  >
+                    <line
+                      x1="0"
+                      y1="0"
+                      x2="50"
+                      y2="100"
+                      stroke="rgba(120, 90, 50, 0.18)"
+                      strokeWidth="0.8"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                    <line
+                      x1="100"
+                      y1="0"
+                      x2="50"
+                      y2="100"
+                      stroke="rgba(120, 90, 50, 0.18)"
+                      strokeWidth="0.8"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </svg>
+                </motion.div>
+
+                {/* Decorative wax seal heart */}
                 {!envelopeOpen && (
-                  <motion.div
-                    className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                  <motion.button
+                    type="button"
+                    aria-label="Open envelope"
+                    className="absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
                     style={{
                       width: "48px",
                       height: "48px",
                       borderRadius: "50%",
-                      background: "radial-gradient(circle, oklch(0.72 0.22 18) 0%, oklch(0.65 0.24 18) 100%)",
+                      background:
+                        "radial-gradient(circle, oklch(0.72 0.22 18) 0%, oklch(0.65 0.24 18) 100%)",
                       boxShadow: "0 0 15px oklch(0.72 0.22 18 / 0.6)",
                       border: "1px solid oklch(0.88 0.18 85 / 0.5)",
                     }}
@@ -116,89 +275,32 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                     >
                       <path d="M12 21s-7-4.5-9.5-9.5C1 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z" />
                     </svg>
-                  </motion.div>
+                  </motion.button>
                 )}
-              </motion.div>
-
-              {/* Envelope bottom */}
-              <div className="env-bottom-wrap absolute bottom-0 z-20 h-[55%] w-full">
-                <div className="env-bottom relative h-full w-full" style={{ clipPath: "polygon(50% 50%, 100% 0, 100% 100%, 0 100%, 0 0)" }}>
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: "white",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-y-0 left-0 w-1/2"
-                    style={{
-                      background: "#f8f6f7",
-                      clipPath: "polygon(100% 50%, 0 0, 0 100%)",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-y-0 right-0 w-1/2"
-                    style={{
-                      background: "#f8f6f7",
-                      clipPath: "polygon(0 50%, 100% 0, 100% 100%)",
-                    }}
-                  />
-                </div>
               </div>
-
-              {/* Letter content - slides up from envelope */}
-              <AnimatePresence>
-                {letterVisible && (
-                  <motion.div
-                    initial={{ top: "100%" }}
-                    animate={{ top: "0" }}
-                    exit={{ top: "100%" }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="env-form-wrap absolute inset-x-0 top-0 z-20 h-full px-6 py-8"
-                    style={{
-                      background: "#1e1938",
-                      color: "white",
-                    }}
-                  >
-                    <div className="flex h-full flex-col justify-center space-y-6 text-center">
-                      <h3 className="text-2xl font-medium leading-tight text-champagne">
-                        Prativa, every memory we've shared has built a foundation for a beautiful
-                        future. You are my greatest gift. To wrap up your birthday surprise, I
-                        made this final piece just for you...
-                      </h3>
-
-                      <motion.button
-                        onClick={handleWatchVideo}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="inline-flex items-center justify-center rounded-full px-8 py-3 font-sans text-sm font-medium tracking-wider text-cream uppercase"
-                        style={{
-                          background: "linear-gradient(125deg, oklch(0.68 0.22 18) 0%, oklch(0.75 0.20 18) 50%, oklch(0.82 0.15 85) 100%)",
-                          boxShadow: "0 8px 20px -5px oklch(0.68 0.22 18 / 0.4)",
-                        }}
-                      >
-                        Watch Your Video
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
 
-      {/* Video Player - elegant slide-in from right */}
-      <AnimatePresence>
+        {/* VIDEO STAGE */}
         {showingVideo && (
           <motion.div
-            initial={{ x: "100%", opacity: 0, scale: 0.98 }}
-            animate={{ x: 0, opacity: 1, scale: 1 }}
-            exit={{ x: "100%", opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.7, ease: [0.32, 1.2, 0.64, 1] }}
+            key="video-stage"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
           >
-            <FinalVideoTheaterWithAsset onClose={() => setShowingVideo(false)} />
+            <FinalVideoTheaterWithAsset
+              onClose={handleVideoClose}
+              onEnded={handleVideoEnded}
+            />
           </motion.div>
+        )}
+
+        {/* FINAL MESSAGE STAGE - shown automatically when the video ends */}
+        {showFinalMessage && (
+          <FinalMessage key="final-message-stage" onReplay={handleReplayFinal} />
         )}
       </AnimatePresence>
     </section>

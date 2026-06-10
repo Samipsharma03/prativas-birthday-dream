@@ -12,6 +12,7 @@ interface FinalVideoTheaterProps {
   videoSrc: string;
   posterSrc?: string;
   onClose: () => void;
+  onEnded?: () => void;
 }
 
 const FINAL_VIDEO_GLOB = import.meta.glob("/public/videos/final.*", {
@@ -42,7 +43,12 @@ const resolveFinalAsset = (): { src: string; poster: string | null } | null => {
   };
 };
 
-export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTheaterProps) {
+export function FinalVideoTheater({
+  videoSrc,
+  posterSrc,
+  onClose,
+  onEnded,
+}: FinalVideoTheaterProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -72,16 +78,19 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
     if (!video) return;
     const onPlay = () => setIsPlaying(true);
     const onPause = () => setIsPlaying(false);
-    const onEnded = () => setIsPlaying(false);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      onEnded?.();
+    };
     video.addEventListener("play", onPlay);
     video.addEventListener("pause", onPause);
-    video.addEventListener("ended", onEnded);
+    video.addEventListener("ended", handleEnded);
     return () => {
       video.removeEventListener("play", onPlay);
       video.removeEventListener("pause", onPause);
-      video.removeEventListener("ended", onEnded);
+      video.removeEventListener("ended", handleEnded);
     };
-  }, []);
+  }, [onEnded]);
 
   const handleRestart = () => {
     const video = videoRef.current;
@@ -212,7 +221,13 @@ export function FinalVideoTheater({ videoSrc, posterSrc, onClose }: FinalVideoTh
   );
 }
 
-export function FinalVideoTheaterWithAsset({ onClose }: { onClose: () => void }) {
+export function FinalVideoTheaterWithAsset({
+  onClose,
+  onEnded,
+}: {
+  onClose: () => void;
+  onEnded?: () => void;
+}) {
   const asset = resolveFinalAsset();
   const finalSrc =
     asset?.src ?? "https://cdn.pixabay.com/video/2022/03/13/110624-687822405_large.mp4";
@@ -220,7 +235,14 @@ export function FinalVideoTheaterWithAsset({ onClose }: { onClose: () => void })
     asset?.poster ??
     "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=1200&q=80";
 
-  return <FinalVideoTheater videoSrc={finalSrc} posterSrc={finalPoster} onClose={onClose} />;
+  return (
+    <FinalVideoTheater
+      videoSrc={finalSrc}
+      posterSrc={finalPoster}
+      onClose={onClose}
+      onEnded={onEnded}
+    />
+  );
 }
 
 export default FinalVideoTheater;
