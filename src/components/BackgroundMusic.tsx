@@ -23,7 +23,7 @@ import { useEffect, useRef } from "react";
  */
 
 const DEFAULT_VOLUME = 0.25; // soft — sits behind the content
-const FADE_OUT_MS = 1500; // requested fade duration before unmount
+const FADE_OUT_MS = 3500; // slow fade before final video begins
 const SRC = "/memories/bg-music.mp3";
 
 export function BackgroundMusic() {

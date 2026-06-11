@@ -86,10 +86,7 @@ function classify(url: string): "image" | "video" | "audio" {
  * resolves once every job settles (success *or* failure). Used so we
  * don't fire 30+ decoders at once on slow phones.
  */
-function runWithConcurrency(
-  jobs: Array<() => Promise<void>>,
-  limit: number,
-): Promise<void> {
+function runWithConcurrency(jobs: Array<() => Promise<void>>, limit: number): Promise<void> {
   return new Promise((resolve) => {
     let nextIndex = 0;
     let inFlight = 0;

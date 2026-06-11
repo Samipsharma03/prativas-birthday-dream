@@ -124,11 +124,6 @@ const messageForIndex = (index: number, slot: string): string => {
   return PRATIVA_MESSAGES[index % PRATIVA_MESSAGES.length];
 };
 
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=900&q=80";
-const FALLBACK_POSTER =
-  "https://images.unsplash.com/photo-1503516459261-40c66117780a?auto=format&fit=crop&w=900&q=80";
-
 const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
   const num = Number(slot);
   const videoUrl = videoBySlot[slot];
@@ -138,7 +133,7 @@ const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
     return {
       type: "video",
       src: videoUrl,
-      poster: imageUrl ?? FALLBACK_POSTER,
+      poster: imageUrl,
       message: messageForIndex(index, slot),
       wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
     };
@@ -146,7 +141,7 @@ const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
 
   return {
     type: "image",
-    src: imageUrl ?? FALLBACK_IMAGE,
+    src: imageUrl,
     message: messageForIndex(index, slot),
     wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
   };
@@ -440,4 +435,3 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
 }
 
 export default GalleryStep;
-  

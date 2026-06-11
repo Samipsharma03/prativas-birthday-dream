@@ -48,8 +48,7 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
-          background:
-            "radial-gradient(circle, oklch(0.88 0.06 10 / 0.10) 0%, transparent 65%)",
+          background: "radial-gradient(circle, oklch(0.88 0.06 10 / 0.10) 0%, transparent 65%)",
           filter: "blur(50px)",
         }}
       />

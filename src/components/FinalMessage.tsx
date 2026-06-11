@@ -21,8 +21,7 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
       transition={{ duration: 1.2, ease: "easeInOut" }}
       className="relative flex min-h-screen w-full items-center justify-center overflow-hidden p-6"
       style={{
-        background:
-          "linear-gradient(160deg, #0b0820 0%, #1a1238 45%, #2a1a4a 100%)",
+        background: "linear-gradient(160deg, #0b0820 0%, #1a1238 45%, #2a1a4a 100%)",
       }}
     >
       {/* Ambient backdrop glow */}
@@ -72,8 +71,7 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
           className="mb-6 flex h-16 w-16 items-center justify-center rounded-full"
           style={{
-            background:
-              "radial-gradient(circle, oklch(0.78 0.18 18) 0%, oklch(0.62 0.22 18) 100%)",
+            background: "radial-gradient(circle, oklch(0.78 0.18 18) 0%, oklch(0.62 0.22 18) 100%)",
             boxShadow: "0 0 35px oklch(0.78 0.18 18 / 0.5)",
           }}
         >
@@ -117,15 +115,19 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           transition={{ duration: 1.2, delay: 1.2, ease: "easeOut" }}
           className="max-w-[520px] text-base font-light leading-relaxed text-cream/85 sm:text-lg"
         >
-        I wanted to create this entire space just for you, because a standard birthday text could never truly capture how incredible of a person you are.
-
-        There is a unique, rare warmth to your presence. You have this beautiful ability to bring genuine light and happiness into a room just by walking into it. Whether it’s your laughter, your quiet kindness, or just the effortless way you carry yourself, you leave a lasting impression on everyone lucky enough to know you.
-
-        Getting to know you has easily been the absolute highlight of my year. You have a way of turning completely ordinary days into moments I genuinely look forward to, and I am so incredibly grateful to have you in my life.
-
-        On your special day, my only wish is that you are surrounded by the exact same pure joy, care, and love that you unconsciously give to the world every single day. You deserve a year ahead filled with breathtaking adventures, endless smiles, and every single dream your heart is chasing.
-
-        Never forget how truly special, admired, and deeply appreciated you are. Have the most magical birthday!
+          I wanted to create this entire space just for you, because a standard birthday text could
+          never truly capture how incredible of a person you are. There is a unique, rare warmth to
+          your presence. You have this beautiful ability to bring genuine light and happiness into a
+          room just by walking into it. Whether it’s your laughter, your quiet kindness, or just the
+          effortless way you carry yourself, you leave a lasting impression on everyone lucky enough
+          to know you. Getting to know you has easily been the absolute highlight of my year. You
+          have a way of turning completely ordinary days into moments I genuinely look forward to,
+          and I am so incredibly grateful to have you in my life. On your special day, my only wish
+          is that you are surrounded by the exact same pure joy, care, and love that you
+          unconsciously give to the world every single day. You deserve a year ahead filled with
+          breathtaking adventures, endless smiles, and every single dream your heart is chasing.
+          Never forget how truly special, admired, and deeply appreciated you are. Have the most
+          magical birthday!
         </motion.p>
 
         <motion.p

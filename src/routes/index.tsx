@@ -30,7 +30,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const GALLERY_IMAGES = import.meta.glob("/images/gallery-*", {
+const GALLERY_IMAGES = import.meta.glob("/public/images/gallery-*", {
   eager: true,
   query: "?url",
   import: "default",
