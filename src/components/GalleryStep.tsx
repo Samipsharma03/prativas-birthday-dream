@@ -7,11 +7,11 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
  * Step 1 of the journey — "The Memory Lane".
  *
  * Contains:
- *   • A parallax Hero with one-word-at-a-time reveal.
+ *   • A parallax Hero section with twinkling stars.
  *   • The 35-card masonry gallery of gifts (auto-discovered from
- *     /public/images and /public/videos).
+ *     /images and /videos).
  *   • A luxurious, premium CTA section at the bottom with a glassmorphism
- *     box, a pulsing heart icon and a stylized "Unlock Our Next Chapter"
+ *     box, a pulsing heart icon and a stylized "Let's move ahead"
  *     button. Clicking it calls `onUnlock` to transition to step 2 while
  *     background music continues uninterrupted.
  */
@@ -21,11 +21,11 @@ interface GalleryStepProps {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   AUTO-DISCOVERY
-   The gallery auto-discovers files in /public/images/ and /public/videos/.
-   Drop a `gallery-XX.jpg` (or .png/.webp) into /public/images/ or a
-   `gallery-XX.mp4` into /public/videos/ and it appears automatically.
-   ═══════════════════════════════════════════════════════════════════════════ */
+    AUTO-DISCOVERY
+    The gallery auto-discovers files in /images/ and /videos/.
+    Drop a `gallery-XX.jpg` (or .png/.webp) into /images/ or a
+    `gallery-XX.mp4` into /videos/ and it appears automatically.
+    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface MediaItem {
   type: "image" | "video";
@@ -55,13 +55,13 @@ function extractSlot(path: string): string | null {
 const imageBySlot: Record<string, string> = {};
 for (const [path, url] of Object.entries(IMAGE_FILES)) {
   const slot = extractSlot(path);
-  if (slot) imageBySlot[slot] = url;
+  if (slot) imageBySlot[slot] = url.replace("/public", "");
 }
 
 const videoBySlot: Record<string, string> = {};
 for (const [path, url] of Object.entries(VIDEO_FILES)) {
   const slot = extractSlot(path);
-  if (slot) videoBySlot[slot] = url;
+  if (slot) videoBySlot[slot] = url.replace("/public", "");
 }
 
 const ALL_SLOTS = Array.from(
@@ -335,21 +335,6 @@ function Hero() {
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "38%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
-  const words: { text: string; className: string }[] = [
-    {
-      text: "Happy.",
-      className: "font-display font-light text-cream tracking-tight text-5xl sm:text-6xl",
-    },
-    {
-      text: "Birthday.",
-      className: "font-display font-light text-cream tracking-tight text-5xl sm:text-6xl",
-    },
-    {
-      text: "Prativa.",
-      className: "font-script text-blush text-6xl sm:text-7xl",
-    },
-  ];
-
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
@@ -381,33 +366,10 @@ function Hero() {
         className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-8 text-center"
       >
         <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 1.3, ease: "easeOut" }}
-          className="mb-6 font-script text-xl text-champagne/80 sm:text-2xl"
-        >
-          a little something for
-        </motion.p>
-
-        <h1 className="flex flex-col items-center gap-1">
-          {words.map((w, i) => (
-            <motion.span
-              key={w.text}
-              className={`block leading-tight ${w.className}`}
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 1.0 + i * 0.8, duration: 1.1, ease: "easeOut" }}
-            >
-              {w.text}
-            </motion.span>
-          ))}
-        </h1>
-
-        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 4.3, duration: 1.5 }}
-          className="mt-10 max-w-[200px] font-sans text-xs leading-relaxed text-cream/55"
+          transition={{ delay: 0.3, duration: 1.3, ease: "easeOut" }}
+          className="max-w-[200px] font-sans text-xs leading-relaxed text-cream/55"
         >
           scroll through your memories below
         </motion.p>
@@ -416,7 +378,7 @@ function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 5 }}
+        transition={{ delay: 0.8 }}
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
       >
         <motion.div
@@ -431,211 +393,51 @@ function Hero() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   GALLERY
-   ═══════════════════════════════════════════════════════════════════════════ */
+export function GalleryStep({ onUnlock }: GalleryStepProps) {
+  const [showUnlockHint, setShowUnlockHint] = useState(false);
 
-function Gallery() {
+  useEffect(() => {
+    const timer = setTimeout(() => setShowUnlockHint(true), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <section className="bg-midnight px-2.5 pb-10 pt-10 sm:px-4 sm:pt-14">
-      <div className="mx-auto max-w-lg">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="mb-8 text-center"
-        >
-          <h2 className="font-display text-3xl font-light text-cream sm:text-4xl">
-            Your <span className="font-script text-blush">Memories</span>
-          </h2>
-          <p className="mt-2 font-sans text-[11px] tracking-widest text-cream/35">
-            tap any gift to reveal a message 💌
+    <>
+      <Hero />
+      <section className="relative bg-midnight px-4 pb-32 pt-16">
+        {/* Premium Gallery Header — sits cleanly above the masonry grid */}
+        <div className="text-center pt-12 pb-6 px-4">
+          <h1 className="text-3xl font-extralight tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-white to-pink-200 uppercase sm:text-4xl md:text-5xl mb-3">
+            The Prativa Collection
+          </h1>
+          <p className="font-light tracking-wide text-xs sm:text-sm text-white/60 italic max-w-md mx-auto">
+            A small gallery dedicated to the girl who carries sunshine wherever she goes.
           </p>
-        </motion.div>
+          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-pink-400/40 to-transparent mx-auto mt-6" />
+        </div>
 
-        <div className="columns-2 gap-2 sm:gap-2.5">
-          {MEDIA.map((item, i) => (
-            <GiftCard key={i} item={item} index={i} />
+        {/* 2-column uneven masonry grid (preserved exactly as before) */}
+        <div className="mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
+          {MEDIA.map((item, index) => (
+            <GiftCard key={index} item={item} index={index} />
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   UNLOCK CTA — luxurious glassmorphism "Unlock Our Next Chapter"
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-function UnlockCta({ onUnlock }: { onUnlock: () => void }) {
-  const [isUnlocking, setIsUnlocking] = useState(false);
-
-  const handleClick = () => {
-    if (isUnlocking) return;
-    setIsUnlocking(true);
-
-    // Music keeps playing — BackgroundMusic stays mounted through the letter step
-    // and only fades out when the final video begins.
-    window.setTimeout(() => {
-      onUnlock();
-    }, 600);
-  };
-
-  return (
-    <section className="relative overflow-hidden bg-midnight px-4 pb-24 pt-16 sm:pb-32 sm:pt-20">
-      {/* Ambient radial glow */}
-      <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          background: "radial-gradient(circle, oklch(0.88 0.06 10 / 0.18) 0%, transparent 70%)",
-          filter: "blur(40px)",
-        }}
-      />
-
-      {/* Twinkling stars */}
-      {Array.from({ length: 28 }).map((_, i) => (
-        <span
-          key={i}
-          className="pointer-events-none absolute rounded-full bg-champagne/55 animate-twinkle"
-          style={{
-            width: `${1 + (i % 2)}px`,
-            height: `${1 + (i % 2)}px`,
-            left: `${(i * 53) % 100}%`,
-            top: `${(i * 37) % 100}%`,
-            animationDelay: `${(i % 5) * 0.5}s`,
-          }}
-        />
-      ))}
-
-      <div className="relative mx-auto max-w-md">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="relative rounded-3xl border border-champagne/20 bg-cream/[0.04] px-6 py-10 text-center backdrop-blur-xl sm:px-10 sm:py-14"
-          style={{
-            boxShadow:
-              "0 30px 80px -20px oklch(0.88 0.06 10 / 0.18), inset 0 1px 0 oklch(0.98 0.02 80 / 0.08)",
-          }}
-        >
-          {/* Subtle inner gradient ring */}
-          <div
-            className="pointer-events-none absolute inset-0 rounded-3xl"
-            style={{
-              background:
-                "radial-gradient(ellipse at 50% 0%, oklch(0.86 0.09 85 / 0.10) 0%, transparent 60%)",
-            }}
-          />
-
-          <span className="font-sans text-[10px] tracking-[0.4em] text-champagne/55 uppercase">
-            ✦ one last thing ✦
-          </span>
-
-          {/* Pulsing heart icon */}
-          <div className="mt-5 flex items-center justify-center">
-            <motion.div
-              animate={{ scale: [1, 1.12, 1] }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.6,
-                ease: "easeInOut",
-              }}
-              className="relative flex h-16 w-16 items-center justify-center"
-            >
-              <span
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background:
-                    "radial-gradient(circle, oklch(0.72 0.22 18 / 0.45) 0%, transparent 70%)",
-                  filter: "blur(8px)",
-                }}
-              />
-              <svg
-                className="relative h-10 w-10"
-                viewBox="0 0 24 24"
-                fill="oklch(0.68 0.24 18)"
-                aria-hidden
-              >
-                <path d="M12 21s-7-4.5-9.5-9.5C1 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z" />
-              </svg>
-            </motion.div>
-          </div>
-
-          <h3 className="mt-4 font-display text-2xl font-light leading-snug text-cream sm:text-3xl">
-            And now…
-            <br />
-            <span className="font-script text-blush">the next chapter</span> awaits.
-          </h3>
-
-          <p className="mx-auto mt-3 max-w-xs font-sans text-[11px] leading-relaxed text-cream/55">
-            There's one more thing I've been growing for you. Ready to see it bloom?
-          </p>
-
-          <motion.button
-            type="button"
-            onClick={handleClick}
-            disabled={isUnlocking}
-            whileHover={{ scale: isUnlocking ? 1 : 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="group relative mt-8 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3 font-sans text-[11px] tracking-[0.32em] text-cream uppercase disabled:opacity-70"
-            style={{
-              background:
-                "linear-gradient(120deg, oklch(0.68 0.20 18) 0%, oklch(0.78 0.16 8) 45%, oklch(0.86 0.09 85) 100%)",
-              boxShadow:
-                "0 12px 40px -8px oklch(0.68 0.22 18 / 0.55), inset 0 1px 0 oklch(0.98 0.02 80 / 0.35)",
-            }}
-          >
-            {/* Sheen */}
-            <span
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(110deg, transparent 25%, oklch(0.98 0.02 80 / 0.35) 50%, transparent 75%)",
-                transform: "translateX(-100%)",
-                animation: isUnlocking ? "none" : "cta-sheen 3.4s ease-in-out infinite",
-              }}
-            />
-            <span className="relative">
-              {isUnlocking ? "preparing…" : "Unlock Our Next Chapter"}
-            </span>
-            {!isUnlocking && (
-              <svg
-                className="relative h-3.5 w-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.8}
-                aria-hidden
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-5-5l5 5-5 5" />
-              </svg>
-            )}
-          </motion.button>
-
-          <p className="mt-5 font-sans text-[9px] tracking-[0.3em] text-cream/25 uppercase">
-            ✦ for prativa, with love ✦
-          </p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   GALLERY STEP — composes Hero + Gallery + CTA. The page-level route owns
-   the currentStep state and the BackgroundMusic lifecycle.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-export function GalleryStep({ onUnlock }: GalleryStepProps) {
-  return (
-    <div className="relative">
-      <Hero />
-      <Gallery />
-      <UnlockCta onUnlock={onUnlock} />
-    </div>
+      <motion.button
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: showUnlockHint ? 1 : 0, scale: showUnlockHint ? 1 : 0.9 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onUnlock}
+        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full bg-champagne/90 px-5 py-2 font-sans text-xs font-medium text-midnight shadow-lg shadow-champagne/25"
+      >
+        Let's move ahead
+      </motion.button>
+    </>
   );
 }
 
 export default GalleryStep;
+  

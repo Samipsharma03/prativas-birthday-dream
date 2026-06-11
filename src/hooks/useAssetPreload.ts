@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * useAssetPreload
@@ -9,10 +9,20 @@ import { useEffect, useState } from "react";
  * URL). Updates `progress` as each asset completes so the UI can show a
  * smooth, accurate bar.
  *
- * Videos are preloaded via hidden <video preload="auto"> elements so the
- * browser fetches and decodes enough of the file to play immediately.
- * Audio is preloaded via a hidden <audio preload="auto"> element.
- * Images use the standard `Image()` decoder.
+ * Performance optimisations
+ * ─────────────────────────
+ *  • Videos pre-fetch only `metadata` (size + dimensions + first frame)
+ *    rather than the full media file. We don't need the whole video in
+ *    memory just to flip a card — playback is triggered on demand by the
+ *    IntersectionObserver in `GiftCard`.
+ *  • Audio pre-fetches `metadata` for the same reason — only the loop
+ *    bar needs to be playable; the file is buffered as the user listens.
+ *  • Concurrency is capped (`MAX_CONCURRENT = 6`) so we don't fire 30
+ *    decoders at once on slow phones. Failed / timed-out assets are
+ *    counted as done so a single broken URL never blocks the loader.
+ *  • Per-asset timeouts are short enough to stay responsive on poor
+ *    networks (8s for video, 6s for audio) while still allowing large
+ *    files on a decent connection.
  */
 
 export interface AssetPreloadResult {
@@ -22,9 +32,14 @@ export interface AssetPreloadResult {
   total: number;
 }
 
+const MAX_CONCURRENT = 6; // parallel decoders (kind-agnostic)
+const VIDEO_TIMEOUT_MS = 8_000;
+const AUDIO_TIMEOUT_MS = 6_000;
+
 function preloadImage(url: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
+    img.decoding = "async";
     img.onload = () => resolve();
     img.onerror = () => resolve(); // never block on a broken image
     img.src = url;
@@ -34,30 +49,28 @@ function preloadImage(url: string): Promise<void> {
 function preloadVideo(url: string): Promise<void> {
   return new Promise((resolve) => {
     const v = document.createElement("video");
-    v.preload = "auto";
+    // metadata = enough to display the first frame and know the duration
+    v.preload = "metadata";
     v.muted = true;
     v.playsInline = true;
     v.src = url;
     const done = () => resolve();
-    v.addEventListener("canplaythrough", done, { once: true });
-    v.addEventListener("loadeddata", done, { once: true });
+    v.addEventListener("loadedmetadata", done, { once: true });
     v.addEventListener("error", done, { once: true });
-    // Some browsers never fire canplaythrough for very large files;
-    // cap the wait at 12s so we never block forever.
-    window.setTimeout(done, 12_000);
+    // Cap the wait so we never block forever on a sluggish connection.
+    window.setTimeout(done, VIDEO_TIMEOUT_MS);
   });
 }
 
 function preloadAudio(url: string): Promise<void> {
   return new Promise((resolve) => {
     const a = new Audio();
-    a.preload = "auto";
+    a.preload = "metadata";
     a.src = url;
     const done = () => resolve();
-    a.addEventListener("canplaythrough", done, { once: true });
-    a.addEventListener("loadeddata", done, { once: true });
+    a.addEventListener("loadedmetadata", done, { once: true });
     a.addEventListener("error", done, { once: true });
-    window.setTimeout(done, 8_000);
+    window.setTimeout(done, AUDIO_TIMEOUT_MS);
   });
 }
 
@@ -66,6 +79,44 @@ function classify(url: string): "image" | "video" | "audio" {
   if (/\.(mp4|webm|mov|m4v|ogv)$/.test(clean)) return "video";
   if (/\.(mp3|wav|ogg|m4a|aac|flac)$/.test(clean)) return "audio";
   return "image";
+}
+
+/**
+ * Lightweight async-pool: runs at most `limit` jobs in parallel and
+ * resolves once every job settles (success *or* failure). Used so we
+ * don't fire 30+ decoders at once on slow phones.
+ */
+function runWithConcurrency(
+  jobs: Array<() => Promise<void>>,
+  limit: number,
+): Promise<void> {
+  return new Promise((resolve) => {
+    let nextIndex = 0;
+    let inFlight = 0;
+    let settled = 0;
+    const total = jobs.length;
+
+    const launch = () => {
+      // Fill the pool up to `limit`, then return — more jobs will be
+      // launched from the `.finally` of each in-flight job.
+      while (inFlight < limit && nextIndex < total) {
+        const idx = nextIndex++;
+        inFlight += 1;
+        const job = jobs[idx];
+        job().finally(() => {
+          inFlight -= 1;
+          settled += 1;
+          if (settled === total) {
+            resolve();
+            return;
+          }
+          launch();
+        });
+      }
+    };
+
+    launch();
+  });
 }
 
 export function useAssetPreload(
@@ -83,13 +134,29 @@ export function useAssetPreload(
     total: urls.length,
   });
 
+  // Keep the latest urls reference so we don't restart the effect on
+  // shallow identity changes of the input array.
+  const urlsKey = urls.join("|");
+  const urlsRef = useRef(urls);
+  urlsRef.current = urls;
+
   useEffect(() => {
     let cancelled = false;
     const startedAt = performance.now();
-    const total = urls.length;
+    const total = urlsRef.current.length;
+    const urlList = urlsRef.current;
+
+    const finish = () => {
+      if (cancelled) return;
+      const elapsed = performance.now() - startedAt;
+      const wait = Math.max(0, minDurationMs - elapsed);
+      window.setTimeout(() => {
+        if (cancelled) return;
+        setState({ isReady: true, progress: 1, loaded: total, total });
+      }, wait);
+    };
 
     if (total === 0) {
-      // Nothing to load — just respect the min-duration timer.
       const wait = Math.max(0, minDurationMs);
       window.setTimeout(() => {
         if (cancelled) return;
@@ -100,21 +167,25 @@ export function useAssetPreload(
       };
     }
 
-    let loaded = 0;
     setState({ isReady: false, progress: 0, loaded: 0, total });
 
     const tick = () => {
       if (cancelled) return;
-      loaded += 1;
-      setState({
-        isReady: false,
-        progress: loaded / total,
-        loaded,
-        total,
+      setState((prev) => {
+        const loaded = prev.loaded + 1;
+        return {
+          isReady: false,
+          progress: Math.min(1, loaded / total),
+          loaded,
+          total,
+        };
       });
     };
 
-    const tasks = urls.map((url) => {
+    // Build a per-asset job so we can stream progress even with a
+    // concurrency cap (each promise resolves as soon as that *one* asset
+    // is done, regardless of the others).
+    const jobs = urlList.map((url) => {
       const kind = classify(url);
       const p =
         kind === "video"
@@ -122,24 +193,17 @@ export function useAssetPreload(
           : kind === "audio"
             ? preloadAudio(url)
             : preloadImage(url);
-      return p.then(tick);
+      // Always resolve (never reject) so the pool doesn't bail early.
+      return () => p.then(tick).catch(tick);
     });
 
-    Promise.all(tasks).then(() => {
-      if (cancelled) return;
-      const elapsed = performance.now() - startedAt;
-      const wait = Math.max(0, minDurationMs - elapsed);
-      window.setTimeout(() => {
-        if (cancelled) return;
-        setState({ isReady: true, progress: 1, loaded: total, total });
-      }, wait);
-    });
+    runWithConcurrency(jobs, MAX_CONCURRENT).then(finish);
 
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urls.join("|")]);
+  }, [urlsKey]);
 
   return state;
 }

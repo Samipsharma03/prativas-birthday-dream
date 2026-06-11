@@ -3,12 +3,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 
 import { BackgroundMusic } from "../components/BackgroundMusic";
+import { BirthdayIntro } from "../components/BirthdayIntro";
 import { GalleryStep } from "../components/GalleryStep";
 import { LoveLetter } from "../components/LoveLetter";
 import { PageLoader } from "../components/PageLoader";
 import { useAssetPreload } from "../hooks/useAssetPreload";
 
-type Step = "gallery" | "letter";
+type Step = "birthdayIntro" | "gallery" | "letter";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,19 +30,19 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const GALLERY_IMAGES = import.meta.glob("/public/images/gallery-*", {
+const GALLERY_IMAGES = import.meta.glob("/images/gallery-*", {
   eager: true,
   query: "?url",
   import: "default",
 }) as Record<string, string>;
 
-const GALLERY_VIDEOS = import.meta.glob("/public/videos/gallery-*", {
+const GALLERY_VIDEOS = import.meta.glob("/videos/gallery-*", {
   eager: true,
   query: "?url",
   import: "default",
 }) as Record<string, string>;
 
-const FINAL_VIDEO_GLOB = import.meta.glob("/public/videos/final.*", {
+const FINAL_VIDEO_GLOB = import.meta.glob("/videos/final.*", {
   eager: true,
   query: "?url",
   import: "default",
@@ -57,7 +58,8 @@ function collectAssetUrls(): string[] {
 }
 
 function Index() {
-  const [currentStep, setCurrentStep] = useState<Step>("gallery");
+  const [currentStep, setCurrentStep] = useState<Step>("birthdayIntro");
+  const goToGallery = useCallback(() => setCurrentStep("gallery"), []);
   const goToLetter = useCallback(() => setCurrentStep("letter"), []);
   const preloadUrls = useMemo(() => collectAssetUrls(), []);
   const { isReady: assetsReady, progress } = useAssetPreload(preloadUrls, 900);
@@ -65,8 +67,20 @@ function Index() {
   return (
     <>
       <main className="relative min-h-screen overflow-x-hidden bg-midnight text-cream">
-        {currentStep === "gallery" && <BackgroundMusic />}
+        <BackgroundMusic />
         <AnimatePresence mode="wait">
+          {currentStep === "birthdayIntro" && (
+            <motion.section
+              key="birthdayIntro"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.9, ease: "easeInOut" }}
+              className="absolute inset-x-0 top-0"
+            >
+              <BirthdayIntro onContinue={goToGallery} active={assetsReady} />
+            </motion.section>
+          )}
           {currentStep === "gallery" && (
             <motion.section
               key="gallery"

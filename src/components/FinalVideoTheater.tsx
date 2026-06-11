@@ -38,8 +38,8 @@ const resolveFinalAsset = (): { src: string; poster: string | null } | null => {
   const posterUrl = posterCandidates.map((ext) => `${base}${ext}`).find((p) => FINAL_VIDEO_GLOB[p]);
 
   return {
-    src: videoUrl,
-    poster: posterUrl ? (FINAL_VIDEO_GLOB[posterUrl] ?? null) : null,
+    src: videoUrl.replace("/public", ""),
+    poster: posterUrl ? (FINAL_VIDEO_GLOB[posterUrl]?.replace("/public", "") ?? null) : null,
   };
 };
 
