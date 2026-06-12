@@ -340,8 +340,12 @@ function Hero() {
           loading="eager"
           className="h-[135%] w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-midnight/65 via-midnight/30 to-midnight" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f2a]/70 via-[#2a1438]/40 to-[#0f0a1c]" />
       </motion.div>
+
+      {/* Falling sakura petals across the hero */}
+      <SakuraPetals count={14} />
+
 
       {Array.from({ length: 36 }).map((_, i) => (
         <span
