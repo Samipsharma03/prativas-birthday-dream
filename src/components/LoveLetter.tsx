@@ -234,7 +234,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 4.5, duration: 1 }}
+                  transition={{ delay: 0.8, duration: 1 }}
                   className="mt-6 font-script text-xl text-rose-600"
                 >
                   ✨ With love ✨
