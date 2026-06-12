@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { SakuraPetals } from "./SakuraPetals";
+import { Moon } from "./Moon";
 
 /**
  * BirthdayIntro — Cherry Blossom Night edition
