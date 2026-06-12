@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FinalVideoTheaterWithAsset } from "./FinalVideoTheater";
 import { FinalMessage } from "./FinalMessage";
 import { SakuraPetals } from "./SakuraPetals";
+import { Moon } from "./Moon";
 
 interface LoveLetterProps {
   onOpenComplete?: () => void;
