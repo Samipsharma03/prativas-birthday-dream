@@ -245,6 +245,8 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
+              background: "linear-gradient(135deg, oklch(0.28 0.10 320), oklch(0.20 0.08 290))",
+              minHeight: "140px",
             } as React.CSSProperties
           }
         >
@@ -255,7 +257,8 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               loading="lazy"
               decoding="async"
               draggable={false}
-              className="w-full h-auto object-cover"
+              className="block w-full h-auto object-cover"
+              style={{ aspectRatio: "auto" }}
             />
           ) : (
             <video
@@ -266,7 +269,8 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               loop
               playsInline
               preload="none"
-              className="w-full h-auto object-cover bg-midnight"
+              className="block w-full h-auto object-cover"
+              style={{ aspectRatio: "3 / 4" }}
             />
           )}
 
