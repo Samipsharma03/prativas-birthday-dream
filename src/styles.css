@@ -138,6 +138,10 @@
   --color-champagne: var(--champagne);
   --color-midnight: var(--midnight);
   --color-cream: var(--cream);
+  --color-sakura: var(--sakura);
+  --color-sakura-soft: var(--sakura-soft);
+  --color-plum: var(--plum);
+  --color-night: var(--night);
   --font-display: "Cormorant Garamond", serif;
   --font-script: "Dancing Script", cursive;
   --font-sans: "Quicksand", sans-serif;
