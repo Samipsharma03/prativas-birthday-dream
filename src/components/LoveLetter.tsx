@@ -245,7 +245,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 5, duration: 0.6 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
               onClick={handleWatchVideo}
               whileTap={{ scale: 0.95 }}
               className="relative z-10 mt-8 rounded-full px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wider text-cream"
