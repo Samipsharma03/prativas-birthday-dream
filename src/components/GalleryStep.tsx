@@ -245,6 +245,8 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
+              background: "linear-gradient(135deg, oklch(0.28 0.10 320), oklch(0.20 0.08 290))",
+              minHeight: "140px",
             } as React.CSSProperties
           }
         >
@@ -255,7 +257,8 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               loading="lazy"
               decoding="async"
               draggable={false}
-              className="w-full h-auto object-cover"
+              className="block w-full h-auto object-cover"
+              style={{ aspectRatio: "auto" }}
             />
           ) : (
             <video
@@ -266,7 +269,8 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               loop
               playsInline
               preload="none"
-              className="w-full h-auto object-cover bg-midnight"
+              className="block w-full h-auto object-cover"
+              style={{ aspectRatio: "3 / 4" }}
             />
           )}
 
@@ -409,8 +413,8 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         <SakuraPetals count={12} fixed />
         {/* Premium Gallery Header */}
         <div className="text-center pt-12 pb-6 px-4 relative z-10">
-          <p className="font-sans text-[10px] tracking-[0.4em] text-sakura/80 uppercase mb-4">— Chapter I · Petals of memory —</p>
-          <h1 className="text-shimmer text-3xl font-extralight tracking-[0.2em] uppercase sm:text-4xl md:text-5xl mb-3">
+          <p className="font-sans text-[10px] tracking-[0.4em] text-sakura uppercase mb-4" style={{ textShadow: "0 0 12px oklch(0.62 0.18 350 / 0.6)" }}>— Chapter I · Petals of memory —</p>
+          <h1 className="text-3xl font-extralight tracking-[0.18em] text-[#fff5f9] uppercase sm:text-4xl md:text-5xl mb-3" style={{ textShadow: "0 2px 24px oklch(0.62 0.18 350 / 0.5)" }}>
             The Prativa Collection
           </h1>
           <p className="font-light tracking-wide text-xs sm:text-sm text-white/65 italic max-w-md mx-auto">

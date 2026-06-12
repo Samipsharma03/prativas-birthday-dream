@@ -361,18 +361,19 @@
 .text-shimmer {
   background: linear-gradient(
     100deg,
-    oklch(0.92 0.06 350) 0%,
-    oklch(0.78 0.14 350) 30%,
-    #fef0f5 50%,
-    oklch(0.78 0.14 350) 70%,
-    oklch(0.92 0.06 350) 100%
+    #fff5f9 0%,
+    #fce0ea 25%,
+    #ffffff 50%,
+    #fce0ea 75%,
+    #fff5f9 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: shimmer-sweep 5s linear infinite;
+  animation: shimmer-sweep 6s linear infinite;
+  filter: drop-shadow(0 1px 12px oklch(0.62 0.18 350 / 0.55));
 }
 
 .moon-glow { animation: moon-breath 4s ease-in-out infinite; }

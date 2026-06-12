@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FinalVideoTheaterWithAsset } from "./FinalVideoTheater";
 import { FinalMessage } from "./FinalMessage";
 import { SakuraPetals } from "./SakuraPetals";
+import { Moon } from "./Moon";
 
 interface LoveLetterProps {
   onOpenComplete?: () => void;
@@ -13,36 +14,6 @@ type Phase = "idle" | "letterOpen" | "video" | "final";
 const LETTER_TEXT =
   "You have this incredibly rare, amazing energy that just makes everything feel a little brighter whenever you're around. I don't think you even realize how much your presence is appreciated, Prativa. Happy Birthday!";
 
-/**
- * Typewriter — reveals text one character at a time.
- * Pure JS, no hover. Mobile-friendly.
- */
-function Typewriter({ text, delay = 0, speed = 28 }: { text: string; delay?: number; speed?: number }) {
-  const [shown, setShown] = useState(0);
-  const startedRef = useRef(false);
-  useEffect(() => {
-    if (startedRef.current) return;
-    startedRef.current = true;
-    const t0 = setTimeout(() => {
-      const id = setInterval(() => {
-        setShown((s) => {
-          if (s >= text.length) {
-            clearInterval(id);
-            return s;
-          }
-          return s + 1;
-        });
-      }, speed);
-    }, delay);
-    return () => clearTimeout(t0);
-  }, [delay, speed, text.length]);
-  return (
-    <>
-      {text.slice(0, shown)}
-      <span className="ml-[1px] inline-block w-[2px] h-[1em] -mb-[2px] bg-rose-700/70 animate-pulse" />
-    </>
-  );
-}
 
 export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -75,19 +46,16 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
       }}
     >
       {/* Drifting petals across the whole letter scene */}
-      <SakuraPetals count={18} />
+      <SakuraPetals count={16} />
 
-      {/* Glowing pink moon */}
-      <div
-        aria-hidden
-        className="moon-glow pointer-events-none absolute left-1/2 top-[20%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          width: "220px",
-          height: "220px",
-          background:
-            "radial-gradient(circle at 40% 40%, #fef0f5 0%, oklch(0.82 0.12 350) 35%, oklch(0.50 0.16 350 / 0) 70%)",
-        }}
-      />
+      {/* Detailed moon — the selenophile's favourite friend 🌙 */}
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute left-1/2 top-[10%] -translate-x-1/2 z-0"
+      >
+        <Moon size={160} />
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {phase === "idle" && (
@@ -228,13 +196,13 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                 ✕
               </button>
               <div className="text-center font-serif text-gray-800">
-                <p className="mb-4 text-base leading-relaxed sm:text-lg min-h-[8em]">
-                  <Typewriter text={LETTER_TEXT} delay={400} speed={26} />
+                <p className="mb-4 text-base leading-relaxed sm:text-lg">
+                  {LETTER_TEXT}
                 </p>
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 4.5, duration: 1 }}
+                  transition={{ delay: 0.8, duration: 1 }}
                   className="mt-6 font-script text-xl text-rose-600"
                 >
                   ✨ With love ✨
@@ -245,7 +213,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 5, duration: 0.6 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
               onClick={handleWatchVideo}
               whileTap={{ scale: 0.95 }}
               className="relative z-10 mt-8 rounded-full px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wider text-cream"
