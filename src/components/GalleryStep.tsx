@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { SakuraPetals } from "./SakuraPetals";
 
 /**
  * GalleryStep
