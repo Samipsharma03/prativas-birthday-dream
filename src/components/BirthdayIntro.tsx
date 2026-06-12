@@ -32,20 +32,24 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           "radial-gradient(ellipse at 50% 35%, oklch(0.30 0.12 320) 0%, oklch(0.18 0.07 290) 45%, #0f0a1c 100%)",
       }}
     >
-      {/* Glowing pink "moon" behind the headline */}
-      <div
-        aria-hidden
-        className="moon-glow pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          width: "260px",
-          height: "260px",
-          background:
-            "radial-gradient(circle at 40% 40%, #fef0f5 0%, oklch(0.85 0.10 350) 35%, oklch(0.50 0.16 350 / 0) 70%)",
-        }}
-      />
+      {/* Detailed moon — Prativa is a selenophile 🌙 */}
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut" }}
+        className="pointer-events-none absolute left-1/2 top-[18%] -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Moon size={220} />
+        </motion.div>
+      </motion.div>
 
       {/* Falling petals */}
-      <SakuraPetals count={16} />
+      <SakuraPetals count={14} />
+
 
       {/* Faint twinkling stars */}
       {Array.from({ length: 22 }).map((_, i) => (
