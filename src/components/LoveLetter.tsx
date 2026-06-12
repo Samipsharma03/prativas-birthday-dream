@@ -228,8 +228,8 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                 ✕
               </button>
               <div className="text-center font-serif text-gray-800">
-                <p className="mb-4 text-base leading-relaxed sm:text-lg min-h-[8em]">
-                  <Typewriter text={LETTER_TEXT} delay={400} speed={26} />
+                <p className="mb-4 text-base leading-relaxed sm:text-lg">
+                  {LETTER_TEXT}
                 </p>
                 <motion.p
                   initial={{ opacity: 0 }}
