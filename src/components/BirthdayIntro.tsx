@@ -25,11 +25,11 @@ const STAGGER = {
 export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps) {
   return (
     <section
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden px-6 text-center"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-start gap-6 overflow-hidden px-6 pt-[8svh] pb-12 text-center"
       aria-label="Birthday introduction"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 35%, oklch(0.30 0.12 320) 0%, oklch(0.18 0.07 290) 45%, #0f0a1c 100%)",
+          "radial-gradient(ellipse at 50% 30%, oklch(0.30 0.12 320) 0%, oklch(0.16 0.07 290) 50%, #0a0614 100%)",
       }}
     >
       {/* Detailed moon — Prativa is a selenophile 🌙 */}
@@ -37,15 +37,16 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
         initial={{ opacity: 0, y: 40, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut" }}
-        className="pointer-events-none absolute left-1/2 top-[18%] -translate-x-1/2"
+        className="relative z-10 shrink-0"
       >
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Moon size={220} />
+          <Moon size={180} />
         </motion.div>
       </motion.div>
+
 
       {/* Falling petals */}
       <SakuraPetals count={14} />
