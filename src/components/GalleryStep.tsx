@@ -434,7 +434,11 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onUnlock}
-        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full bg-champagne/90 px-5 py-2 font-sans text-xs font-medium text-midnight shadow-lg shadow-champagne/25"
+        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium text-cream"
+        style={{
+          background: "linear-gradient(135deg, oklch(0.62 0.20 350), oklch(0.50 0.22 340))",
+          boxShadow: "0 10px 30px -8px oklch(0.62 0.20 350 / 0.55)",
+        }}
       >
         Let's move ahead
       </motion.button>
