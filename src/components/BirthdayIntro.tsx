@@ -1,34 +1,18 @@
 import { motion } from "framer-motion";
+import { SakuraPetals } from "./SakuraPetals";
 
 /**
- * BirthdayIntro
- * -------------
- * Page 1 of the journey — a minimal, centered, dark screen that introduces
- * the experience with a sequence of staggered text reveals and a single
- * call-to-action that transitions to the next page (the love letter).
+ * BirthdayIntro — Cherry Blossom Night edition
  *
- * Animation timeline (only begins once `active` flips to true, i.e. after
- * the PageLoader has finished its exit animation):
- *   • 0.3s  — <p>   "a little something for" fades + lifts in
- *   • 1.6s  — <h2>  "the girl who effortlessly makes…" fades + lifts in (italic)
- *   • 3.0s  — <h1>  "Happy Birthday, Prativa! ✨" fades + lifts in (pink→rose gradient)
- *   • 4.2s  — "Read My Message 🤍" button fades in
- *
- * When `active` is false (loader is still visible), every text element is
- * held in the hidden "pre-animation" state so that the staggered reveal
- * begins *fresh* the moment the loader finishes, rather than the user
- * seeing a half-finished animation that has been running invisibly behind
- * the loader.
+ * - Layered midnight + plum gradient background
+ * - Glowing pink "moon" behind the headline
+ * - Falling sakura petals (CSS, preloaded)
+ * - Shimmering gradient sweep on Prativa's name
+ * - Mobile-first: no hover effects, big tap target
  */
 
 interface BirthdayIntroProps {
   onContinue: () => void;
-  /**
-   * When `true`, the staggered text-reveal animation runs.
-   * When `false`, the section is held in its pre-animation hidden state
-   * until the loader finishes so the user sees a clean, deliberate
-   * one-at-a-time reveal.
-   */
   active?: boolean;
 }
 
@@ -40,25 +24,34 @@ const STAGGER = {
 export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps) {
   return (
     <section
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-midnight px-6 text-center"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden px-6 text-center"
       aria-label="Birthday introduction"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 35%, oklch(0.30 0.12 320) 0%, oklch(0.18 0.07 290) 45%, #0f0a1c 100%)",
+      }}
     >
-      {/* Soft ambient glow — keeps the screen feeling alive without distraction */}
+      {/* Glowing pink "moon" behind the headline */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="moon-glow pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
-          background: "radial-gradient(circle, oklch(0.88 0.06 10 / 0.10) 0%, transparent 65%)",
-          filter: "blur(50px)",
+          width: "260px",
+          height: "260px",
+          background:
+            "radial-gradient(circle at 40% 40%, #fef0f5 0%, oklch(0.85 0.10 350) 35%, oklch(0.50 0.16 350 / 0) 70%)",
         }}
       />
 
-      {/* A few faint twinkling stars to match the rest of the design language */}
-      {Array.from({ length: 18 }).map((_, i) => (
+      {/* Falling petals */}
+      <SakuraPetals count={16} />
+
+      {/* Faint twinkling stars */}
+      {Array.from({ length: 22 }).map((_, i) => (
         <span
           key={i}
           aria-hidden
-          className="pointer-events-none absolute rounded-full bg-champagne/45 animate-twinkle"
+          className="pointer-events-none absolute rounded-full bg-white/70 animate-twinkle"
           style={{
             width: `${1 + (i % 2)}px`,
             height: `${1 + (i % 2)}px`,
@@ -69,13 +62,13 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
         />
       ))}
 
-      {/* Text stack — vertically centered, max-width for legibility on wide screens */}
       <div className="relative z-10 flex max-w-2xl flex-col items-center gap-5 sm:gap-6">
         <motion.p
           {...STAGGER}
           animate={active ? STAGGER.animate : STAGGER.initial}
           transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
-          className="font-script text-base text-champagne/80 sm:text-lg"
+          className="font-script text-base text-sakura-soft/90 sm:text-lg"
+          style={{ textShadow: "0 0 14px oklch(0.78 0.14 350 / 0.5)" }}
         >
           a little something for
         </motion.p>
@@ -84,7 +77,7 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           {...STAGGER}
           animate={active ? STAGGER.animate : STAGGER.initial}
           transition={{ delay: 1.6, duration: 1.3, ease: "easeOut" }}
-          className="font-display text-xl font-light italic text-cream/85 sm:text-2xl md:text-3xl"
+          className="font-display text-xl font-light italic text-cream/90 sm:text-2xl md:text-3xl"
         >
           the girl who effortlessly makes every single day a bit brighter...
         </motion.h2>
@@ -93,18 +86,22 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           {...STAGGER}
           animate={active ? STAGGER.animate : STAGGER.initial}
           transition={{ delay: 3.0, duration: 1.4, ease: "easeOut" }}
-          className="mt-1 font-display text-4xl font-light leading-tight tracking-tight sm:text-5xl md:text-6xl"
-          style={{
-            backgroundImage:
-              "linear-gradient(120deg, oklch(0.88 0.06 10) 0%, oklch(0.78 0.16 8) 55%, oklch(0.68 0.20 18) 100%)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            color: "transparent",
-            WebkitTextFillColor: "transparent",
-          }}
+          className="text-shimmer mt-1 font-display text-4xl font-light leading-tight tracking-tight sm:text-5xl md:text-6xl"
         >
           Happy Birthday, Prativa! ✨
         </motion.h1>
+
+        {/* Decorative flourish under headline */}
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={active ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+          transition={{ delay: 3.8, duration: 1.0, ease: "easeOut" }}
+          className="h-px w-40 origin-center"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, oklch(0.78 0.14 350) 50%, transparent)",
+          }}
+        />
 
         <motion.button
           type="button"
@@ -112,16 +109,15 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           initial={{ opacity: 0, y: 8 }}
           animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
           transition={{ delay: 4.2, duration: 1.0, ease: "easeOut" }}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          className="mt-6 inline-flex items-center gap-2 rounded-full border border-champagne/25 bg-cream/[0.03] px-6 py-2.5 font-sans text-xs tracking-[0.28em] text-cream/85 uppercase backdrop-blur-sm transition-colors hover:border-champagne/45 hover:bg-cream/[0.06] sm:text-sm"
+          whileTap={{ scale: 0.96 }}
+          className="mt-6 inline-flex items-center gap-2 rounded-full border border-sakura/40 bg-sakura/10 px-7 py-3 font-sans text-xs tracking-[0.28em] text-cream uppercase backdrop-blur-sm sm:text-sm"
           style={{
             boxShadow:
-              "0 8px 30px -10px oklch(0.88 0.06 10 / 0.35), inset 0 1px 0 oklch(0.98 0.02 80 / 0.06)",
+              "0 8px 30px -8px oklch(0.62 0.20 350 / 0.55), inset 0 1px 0 oklch(1 0 0 / 0.08)",
           }}
         >
           <span>Read My Message</span>
-          <span aria-hidden>🤍</span>
+          <span aria-hidden>🌸</span>
         </motion.button>
       </div>
     </section>
