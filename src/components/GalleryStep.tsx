@@ -420,7 +420,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         </div>
 
         {/* 2-column uneven masonry grid (preserved exactly as before) */}
-        <div className="mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
+        <div className="relative z-10 mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
