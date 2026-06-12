@@ -404,16 +404,19 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
   return (
     <>
       <Hero />
-      <section className="relative bg-midnight px-4 pb-32 pt-16">
-        {/* Premium Gallery Header — sits cleanly above the masonry grid */}
-        <div className="text-center pt-12 pb-6 px-4">
-          <h1 className="text-3xl font-extralight tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-white to-pink-200 uppercase sm:text-4xl md:text-5xl mb-3">
+      <section className="relative px-4 pb-32 pt-16" style={{ background: "linear-gradient(180deg, #0f0a1c 0%, #1a0f2a 50%, #0f0a1c 100%)" }}>
+        {/* Fixed sakura drifting across the whole gallery as you scroll */}
+        <SakuraPetals count={12} fixed />
+        {/* Premium Gallery Header */}
+        <div className="text-center pt-12 pb-6 px-4 relative z-10">
+          <p className="font-sans text-[10px] tracking-[0.4em] text-sakura/80 uppercase mb-4">— Chapter I · Petals of memory —</p>
+          <h1 className="text-shimmer text-3xl font-extralight tracking-[0.2em] uppercase sm:text-4xl md:text-5xl mb-3">
             The Prativa Collection
           </h1>
-          <p className="font-light tracking-wide text-xs sm:text-sm text-white/60 italic max-w-md mx-auto">
+          <p className="font-light tracking-wide text-xs sm:text-sm text-white/65 italic max-w-md mx-auto">
             A small gallery dedicated to the girl who carries sunshine wherever she goes.
           </p>
-          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-pink-400/40 to-transparent mx-auto mt-6" />
+          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-sakura/60 to-transparent mx-auto mt-6" />
         </div>
 
         {/* 2-column uneven masonry grid (preserved exactly as before) */}
