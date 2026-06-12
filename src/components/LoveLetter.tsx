@@ -46,19 +46,16 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
       }}
     >
       {/* Drifting petals across the whole letter scene */}
-      <SakuraPetals count={18} />
+      <SakuraPetals count={16} />
 
-      {/* Glowing pink moon */}
-      <div
-        aria-hidden
-        className="moon-glow pointer-events-none absolute left-1/2 top-[20%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          width: "220px",
-          height: "220px",
-          background:
-            "radial-gradient(circle at 40% 40%, #fef0f5 0%, oklch(0.82 0.12 350) 35%, oklch(0.50 0.16 350 / 0) 70%)",
-        }}
-      />
+      {/* Detailed moon — the selenophile's favourite friend 🌙 */}
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute left-1/2 top-[10%] -translate-x-1/2 z-0"
+      >
+        <Moon size={160} />
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {phase === "idle" && (
