@@ -14,36 +14,6 @@ type Phase = "idle" | "letterOpen" | "video" | "final";
 const LETTER_TEXT =
   "You have this incredibly rare, amazing energy that just makes everything feel a little brighter whenever you're around. I don't think you even realize how much your presence is appreciated, Prativa. Happy Birthday!";
 
-/**
- * Typewriter — reveals text one character at a time.
- * Pure JS, no hover. Mobile-friendly.
- */
-function Typewriter({ text, delay = 0, speed = 28 }: { text: string; delay?: number; speed?: number }) {
-  const [shown, setShown] = useState(0);
-  const startedRef = useRef(false);
-  useEffect(() => {
-    if (startedRef.current) return;
-    startedRef.current = true;
-    const t0 = setTimeout(() => {
-      const id = setInterval(() => {
-        setShown((s) => {
-          if (s >= text.length) {
-            clearInterval(id);
-            return s;
-          }
-          return s + 1;
-        });
-      }, speed);
-    }, delay);
-    return () => clearTimeout(t0);
-  }, [delay, speed, text.length]);
-  return (
-    <>
-      {text.slice(0, shown)}
-      <span className="ml-[1px] inline-block w-[2px] h-[1em] -mb-[2px] bg-rose-700/70 animate-pulse" />
-    </>
-  );
-}
 
 export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
   const [phase, setPhase] = useState<Phase>("idle");
