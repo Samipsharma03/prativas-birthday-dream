@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { SakuraPetals } from "./SakuraPetals";
 
 /**
  * GalleryStep
@@ -339,8 +340,12 @@ function Hero() {
           loading="eager"
           className="h-[135%] w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-midnight/65 via-midnight/30 to-midnight" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f2a]/70 via-[#2a1438]/40 to-[#0f0a1c]" />
       </motion.div>
+
+      {/* Falling sakura petals across the hero */}
+      <SakuraPetals count={14} />
+
 
       {Array.from({ length: 36 }).map((_, i) => (
         <span
@@ -399,20 +404,23 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
   return (
     <>
       <Hero />
-      <section className="relative bg-midnight px-4 pb-32 pt-16">
-        {/* Premium Gallery Header — sits cleanly above the masonry grid */}
-        <div className="text-center pt-12 pb-6 px-4">
-          <h1 className="text-3xl font-extralight tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-white to-pink-200 uppercase sm:text-4xl md:text-5xl mb-3">
+      <section className="relative px-4 pb-32 pt-16" style={{ background: "linear-gradient(180deg, #0f0a1c 0%, #1a0f2a 50%, #0f0a1c 100%)" }}>
+        {/* Fixed sakura drifting across the whole gallery as you scroll */}
+        <SakuraPetals count={12} fixed />
+        {/* Premium Gallery Header */}
+        <div className="text-center pt-12 pb-6 px-4 relative z-10">
+          <p className="font-sans text-[10px] tracking-[0.4em] text-sakura/80 uppercase mb-4">— Chapter I · Petals of memory —</p>
+          <h1 className="text-shimmer text-3xl font-extralight tracking-[0.2em] uppercase sm:text-4xl md:text-5xl mb-3">
             The Prativa Collection
           </h1>
-          <p className="font-light tracking-wide text-xs sm:text-sm text-white/60 italic max-w-md mx-auto">
+          <p className="font-light tracking-wide text-xs sm:text-sm text-white/65 italic max-w-md mx-auto">
             A small gallery dedicated to the girl who carries sunshine wherever she goes.
           </p>
-          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-pink-400/40 to-transparent mx-auto mt-6" />
+          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-sakura/60 to-transparent mx-auto mt-6" />
         </div>
 
         {/* 2-column uneven masonry grid (preserved exactly as before) */}
-        <div className="mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
+        <div className="relative z-10 mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
@@ -426,7 +434,11 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onUnlock}
-        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full bg-champagne/90 px-5 py-2 font-sans text-xs font-medium text-midnight shadow-lg shadow-champagne/25"
+        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium text-cream"
+        style={{
+          background: "linear-gradient(135deg, oklch(0.62 0.20 350), oklch(0.50 0.22 340))",
+          boxShadow: "0 10px 30px -8px oklch(0.62 0.20 350 / 0.55)",
+        }}
       >
         Let's move ahead
       </motion.button>
