@@ -107,21 +107,6 @@ const PRATIVA_MESSAGES = [
   "Your life is a beautiful, unfolding story of grace, kindness, and magic that leaves everyone in absolute awe. 📖",
   "You possess a quiet, fierce strength that is absolutely breathtaking and worthy of admiration every single time.",
   "Your existence is completely vital, bringing a breath of fresh air, pure joy, and meaning to the world. ❤️",
-  "Your elegance isn't something put on; it is a quiet, natural grace that follows you into every single room you enter. ✨",
-  "Your mind is an incredibly beautiful garden, filled with brilliant thoughts, deep wisdom, and endless kindness.",
-  "The innate gentleness in your voice has a rare, magnetic power to quiet the loudest, most chaotic noise around you.",
-  "You effortlessly inspire a higher standard of kindness and sincerity in others, simply by being exactly who you are.",
-  "There is an ethereal, calming quality to your presence that instantly makes any ordinary moment feel deeply significant.",
-  "Your smile is a true masterclass in how to bring overwhelming warmth into a space without uttering a single word. 😊🌸",
-  "In a crowded world of repetitive patterns, your unique spark stands out like a brilliant, completely irreplaceable star. 🌟",
-  "The endless patience, understanding, and genuine empathy you hold within your heart are nothing short of extraordinary.",
-  "Your beauty isn't just anchored to a single moment; it is a timeless, evolving grace that deepens beautifully with every passing year.",
-  "You possess an authentic, radiant energy that can never be replicated, manufactured, or forgotten.",
-  "Prativa, your very name carries a poetic rhythm that perfectly matches the effortless elegance of your soul. 💖",
-  "The world is simply a better, far gentler place because your footsteps walk upon it.",
-  "There is a captivating honesty in your expression that reflects the absolute purity of your heart's intentions.",
-  "You deserve every single ounce of happiness, celebration, and pure joy that the universe has to offer on this special day. 🎉",
-  "Your strength never demands attention with loud words, yet it commands absolute respect and quiet awe from everyone around you."
   "You are a true sanctuary, Prativa. Not just a person, but a beautiful, comforting soul where peace resides.",
   "There is a deep warmth in your eyes that can instantly melt away the heaviest burdens of a long, stressful day.",
   "If the world were a blank canvas, you would be the brightest, most breathtaking colors painted across it. 🎨",
@@ -133,6 +118,7 @@ const PRATIVA_MESSAGES = [
   "The day you entered the world made it a significantly brighter, happier, and more beautiful place. 🎂",
   "You are a bright sun when days are dark, a guiding moon when nights are long, and a soul filled with brilliant light. ☀️🌙"
 ];
+
 const messageForIndex = (index: number, slot: string): string => {
   const explicit = SLOT_META[slot]?.message;
   if (explicit) return explicit;
