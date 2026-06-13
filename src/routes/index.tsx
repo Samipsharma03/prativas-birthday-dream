@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 
 import { BackgroundMusic } from "../components/BackgroundMusic";
+import { BackButton } from "../components/BackButton";
 import { BirthdayIntro } from "../components/BirthdayIntro";
 import { GalleryStep } from "../components/GalleryStep";
 import { LoveLetter } from "../components/LoveLetter";
