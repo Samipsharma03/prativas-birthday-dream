@@ -74,6 +74,11 @@ function Index() {
     <>
       <main className="relative min-h-screen overflow-x-hidden bg-midnight text-cream">
         <BackgroundMusic />
+        <BackButton
+          show={currentStep !== "birthdayIntro"}
+          label={backLabel}
+          onClick={goBack}
+        />
         <AnimatePresence mode="wait">
           {currentStep === "birthdayIntro" && (
             <motion.section
