@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 
 import { BackgroundMusic } from "../components/BackgroundMusic";
+import { BackButton } from "../components/BackButton";
 import { BirthdayIntro } from "../components/BirthdayIntro";
 import { GalleryStep } from "../components/GalleryStep";
 import { LoveLetter } from "../components/LoveLetter";
@@ -61,6 +62,11 @@ function Index() {
   const [currentStep, setCurrentStep] = useState<Step>("birthdayIntro");
   const goToGallery = useCallback(() => setCurrentStep("gallery"), []);
   const goToLetter = useCallback(() => setCurrentStep("letter"), []);
+  const goBack = useCallback(() => {
+    setCurrentStep((s) => (s === "letter" ? "gallery" : s === "gallery" ? "birthdayIntro" : s));
+  }, []);
+  const backLabel =
+    currentStep === "letter" ? "Memories" : currentStep === "gallery" ? "Start" : "";
   const preloadUrls = useMemo(() => collectAssetUrls(), []);
   const { isReady: assetsReady, progress } = useAssetPreload(preloadUrls, 900);
 
@@ -68,6 +74,11 @@ function Index() {
     <>
       <main className="relative min-h-screen overflow-x-hidden bg-midnight text-cream">
         <BackgroundMusic />
+        <BackButton
+          show={currentStep !== "birthdayIntro"}
+          label={backLabel}
+          onClick={goBack}
+        />
         <AnimatePresence mode="wait">
           {currentStep === "birthdayIntro" && (
             <motion.section
