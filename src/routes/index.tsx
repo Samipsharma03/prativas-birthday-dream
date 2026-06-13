@@ -62,6 +62,11 @@ function Index() {
   const [currentStep, setCurrentStep] = useState<Step>("birthdayIntro");
   const goToGallery = useCallback(() => setCurrentStep("gallery"), []);
   const goToLetter = useCallback(() => setCurrentStep("letter"), []);
+  const goBack = useCallback(() => {
+    setCurrentStep((s) => (s === "letter" ? "gallery" : s === "gallery" ? "birthdayIntro" : s));
+  }, []);
+  const backLabel =
+    currentStep === "letter" ? "Memories" : currentStep === "gallery" ? "Start" : "";
   const preloadUrls = useMemo(() => collectAssetUrls(), []);
   const { isReady: assetsReady, progress } = useAssetPreload(preloadUrls, 900);
 
