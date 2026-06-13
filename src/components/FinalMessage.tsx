@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 
 /**
- * FinalMessage
- * ------------
- * Full-page final message shown after the birthday video ends.
- * Edit the text/headline/subline/signature below to customize the message.
+ * FinalMessage — minimalist cute edition
+ *
+ * Soft pastel card on a dreamy cream backdrop. Tiny moon (selenophile),
+ * a single heart, gentle typography. No particle noise.
+ * Edit text below to customize.
  */
 
 interface FinalMessageProps {
@@ -18,154 +19,114 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1.2, ease: "easeInOut" }}
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden p-6"
+      transition={{ duration: 1.1, ease: "easeInOut" }}
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden px-5 py-12"
       style={{
-        background: "linear-gradient(160deg, #0b0820 0%, #1a1238 45%, #2a1a4a 100%)",
+        background:
+          "radial-gradient(ellipse at 50% 0%, #fff4f7 0%, #fce4ec 45%, #f3d9e6 100%)",
       }}
     >
-      {/* Ambient backdrop glow */}
+      {/* Soft sun/moon glow at top */}
       <div
-        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full opacity-70 blur-3xl"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 30%, rgba(190,130,255,0.18) 0%, transparent 60%), radial-gradient(ellipse at 50% 80%, rgba(255,180,120,0.12) 0%, transparent 60%)",
+            "radial-gradient(circle, #fff 0%, oklch(0.92 0.06 350 / 0.7) 50%, transparent 80%)",
         }}
       />
 
-      {/* Subtle floating particles (decorative) */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {Array.from({ length: 18 }).map((_, i) => (
-          <motion.span
-            key={i}
-            className="absolute block h-1 w-1 rounded-full bg-champagne/40"
-            style={{
-              left: `${(i * 53) % 100}%`,
-              top: `${(i * 37) % 100}%`,
-            }}
-            initial={{ opacity: 0, y: 0 }}
-            animate={{
-              opacity: [0, 0.8, 0],
-              y: [-10, -40, -10],
-            }}
-            transition={{
-              duration: 4 + (i % 5),
-              delay: i * 0.25,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
       <motion.div
-        initial={{ y: 30, opacity: 0 }}
+        initial={{ y: 16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1.4, delay: 0.3, ease: [0.22, 0.9, 0.32, 1] }}
-        className="relative z-10 mx-auto flex w-full max-w-[640px] flex-col items-center text-center"
+        transition={{ duration: 1, delay: 0.2, ease: [0.22, 0.9, 0.32, 1] }}
+        className="relative z-10 mx-auto flex w-full max-w-[440px] flex-col items-center rounded-3xl border border-white/70 bg-white/75 px-7 py-10 text-center backdrop-blur-md"
+        style={{
+          boxShadow:
+            "0 30px 80px -30px oklch(0.62 0.18 350 / 0.35), 0 0 0 1px oklch(0.78 0.14 350 / 0.08) inset",
+        }}
       >
-        {/* Top decorative ornament */}
+        {/* Tiny moon */}
         <motion.div
           initial={{ scale: 0.6, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-          className="mb-6 flex h-16 w-16 items-center justify-center rounded-full"
+          transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
+          className="mb-5 flex h-12 w-12 items-center justify-center rounded-full text-2xl"
           style={{
-            background: "radial-gradient(circle, oklch(0.78 0.18 18) 0%, oklch(0.62 0.22 18) 100%)",
-            boxShadow: "0 0 35px oklch(0.78 0.18 18 / 0.5)",
+            background:
+              "radial-gradient(circle at 35% 30%, #fff 0%, #fde4ee 70%, #f3c2d4 100%)",
+            boxShadow: "0 6px 22px -6px oklch(0.62 0.18 350 / 0.45)",
           }}
         >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-8 w-8 text-cream/95"
-            fill="currentColor"
-            aria-hidden
-          >
-            <path d="M12 21s-7-4.5-9.5-9.5C1 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z" />
-          </svg>
+          🌙
         </motion.div>
 
-        {/* Main headline — EDIT THIS */}
+        {/* Headline — EDIT */}
         <motion.h1
-          initial={{ y: 20, opacity: 0 }}
+          initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.7, ease: "easeOut" }}
-          className="font-serif text-3xl font-medium leading-tight text-champagne sm:text-4xl md:text-5xl"
+          transition={{ duration: 0.9, delay: 0.6, ease: "easeOut" }}
+          className="font-display text-3xl font-light leading-tight text-rose-900 sm:text-4xl"
         >
-          {/* ✏️ Replace this headline with your final message */}
-          Happy Birthday, Prativa 🎂
+          happy birthday,
+          <br />
+          <span className="font-script text-4xl italic text-rose-600 sm:text-5xl">
+            Prativa
+          </span>
         </motion.h1>
 
         {/* Divider */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1, delay: 1.0, ease: "easeInOut" }}
-          className="my-6 h-px w-24 origin-center"
+          transition={{ duration: 0.9, delay: 0.9, ease: "easeInOut" }}
+          className="my-5 h-px w-16 origin-center"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, oklch(0.78 0.18 18) 50%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, oklch(0.72 0.16 350) 50%, transparent 100%)",
           }}
         />
 
-        {/* Sub-message — EDIT THIS */}
+        {/* Sub-message — EDIT */}
         <motion.p
-          initial={{ y: 20, opacity: 0 }}
+          initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 1.2, ease: "easeOut" }}
-          className="max-w-[520px] text-base font-light leading-relaxed text-cream/85 sm:text-lg"
+          transition={{ duration: 0.9, delay: 1.05, ease: "easeOut" }}
+          className="text-[15px] font-light leading-relaxed text-rose-950/75 sm:text-base"
         >
-          I wanted to create this entire space just for you, because a standard birthday text could
-          never truly capture how incredible of a person you are. There is a unique, rare warmth to
-          your presence. You have this beautiful ability to bring genuine light and happiness into a
-          room just by walking into it. Whether it’s your laughter, your quiet kindness, or just the
-          effortless way you carry yourself, you leave a lasting impression on everyone lucky enough
-          to know you. Getting to know you has easily been the absolute highlight of my year. You
-          have a way of turning completely ordinary days into moments I genuinely look forward to,
-          and I am so incredibly grateful to have you in my life. On your special day, my only wish
-          is that you are surrounded by the exact same pure joy, care, and love that you
-          unconsciously give to the world every single day. You deserve a year ahead filled with
-          breathtaking adventures, endless smiles, and every single dream your heart is chasing.
-          Never forget how truly special, admired, and deeply appreciated you are. Have the most
-          magical birthday!
+          {/* ✏️ Replace with your final words */}
+          thank you for being you — the gentlest, brightest part of every
+          ordinary day. here&apos;s to a year of soft moons, kind mornings,
+          and every quiet dream coming true.
         </motion.p>
 
+        {/* Signature */}
         <motion.p
-          initial={{ y: 20, opacity: 0 }}
+          initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 1.5, ease: "easeOut" }}
-          className="mt-8 font-serif text-lg italic text-champagne/80 sm:text-xl"
+          transition={{ duration: 0.9, delay: 1.3, ease: "easeOut" }}
+          className="mt-7 flex items-center gap-2 font-script text-lg text-rose-600"
         >
+          <span aria-hidden>♡</span>
           {/* ✏️ Replace this signature */}
-          Forever yours, Samip
+          always, Samip
+          <span aria-hidden>♡</span>
         </motion.p>
 
-        {/* Optional replay button */}
         {onReplay && (
           <motion.button
             type="button"
             onClick={onReplay}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1.2, delay: 1.8, ease: "easeOut" }}
-            whileHover={{ scale: 1.04 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.55, ease: "easeOut" }}
             whileTap={{ scale: 0.96 }}
-            className="mt-12 inline-flex items-center gap-2 rounded-full border border-cream/20 bg-cream/5 px-6 py-3 font-sans text-xs font-medium tracking-[0.25em] text-cream/80 uppercase backdrop-blur-md transition hover:border-cream/40 hover:text-cream"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-rose-300/60 bg-white/60 px-5 py-2.5 font-sans text-[11px] tracking-[0.25em] text-rose-700/80 uppercase backdrop-blur"
           >
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 4v6h6M20 20v-6h-6M20 10A8 8 0 0 0 5.6 7.6M4 14a8 8 0 0 0 14.4 2.4"
-              />
+            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M20 10A8 8 0 0 0 5.6 7.6M4 14a8 8 0 0 0 14.4 2.4" />
             </svg>
-            Replay
+            from the top
           </motion.button>
         )}
       </motion.div>
