@@ -380,22 +380,27 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
   return (
     <>
       <Hero />
-      <section className="relative px-4 pb-32 pt-16" style={{ background: "linear-gradient(180deg, #0f0a1c 0%, #1a0f2a 50%, #0f0a1c 100%)" }}>
-        {/* Fixed sakura drifting across the whole gallery as you scroll */}
-        <SakuraPetals count={12} fixed />
-        {/* Premium Gallery Header */}
-        <div className="text-center pt-12 pb-6 px-4 relative z-10">
-          <p className="font-sans text-[10px] tracking-[0.4em] text-sakura uppercase mb-4" style={{ textShadow: "0 0 12px oklch(0.62 0.18 350 / 0.6)" }}>— Chapter I · Petals of memory —</p>
-          <h1 className="text-3xl font-extralight tracking-[0.18em] text-[#fff5f9] uppercase sm:text-4xl md:text-5xl mb-3" style={{ textShadow: "0 2px 24px oklch(0.62 0.18 350 / 0.5)" }}>
+      <section
+        className="relative px-4 pb-32 pt-12"
+        style={{
+          background:
+            "linear-gradient(180deg, #ecc9a8 0%, #fdf6ec 18%, #fdf6ec 82%, #f3dcc4 100%)",
+        }}
+      >
+        <SakuraPetals count={8} fixed />
+        <div className="text-center pt-6 pb-6 px-4 relative z-10">
+          <p className="font-sans text-[10px] tracking-[0.4em] text-[#a87358] uppercase mb-4">
+            — Chapter I · Petals of memory —
+          </p>
+          <h1 className="text-3xl font-extralight tracking-[0.18em] text-[#5a3d2e] uppercase sm:text-4xl md:text-5xl mb-3">
             The Prativa Collection
           </h1>
-          <p className="font-light tracking-wide text-xs sm:text-sm text-white/65 italic max-w-md mx-auto">
+          <p className="font-light tracking-wide text-xs sm:text-sm text-[#6b4a3a]/75 italic max-w-md mx-auto">
             A small gallery dedicated to the girl who carries sunshine wherever she goes.
           </p>
-          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-sakura/60 to-transparent mx-auto mt-6" />
+          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        {/* 2-column uneven masonry grid (preserved exactly as before) */}
         <div className="relative z-10 mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
@@ -410,10 +415,10 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onUnlock}
-        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium text-cream"
+        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium tracking-wide text-white"
         style={{
-          background: "linear-gradient(135deg, oklch(0.62 0.20 350), oklch(0.50 0.22 340))",
-          boxShadow: "0 10px 30px -8px oklch(0.62 0.20 350 / 0.55)",
+          background: "linear-gradient(135deg, #c97b63, #a55b46)",
+          boxShadow: "0 10px 26px -10px rgba(150, 80, 50, 0.55)",
         }}
       >
         Let's move ahead
