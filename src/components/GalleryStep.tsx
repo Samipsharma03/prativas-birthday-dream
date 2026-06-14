@@ -245,8 +245,9 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
-              background: "linear-gradient(135deg, oklch(0.28 0.10 320), oklch(0.20 0.08 290))",
+              background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)",
               minHeight: "140px",
+              boxShadow: "0 6px 18px -10px rgba(120,70,40,0.25)",
             } as React.CSSProperties
           }
         >
@@ -274,23 +275,10 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             />
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-midnight/50 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 
           <div className="absolute bottom-2 right-2 pointer-events-none">
-            <span className="inline-flex items-center gap-1 rounded-full bg-midnight/65 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-cream/65">
-              <svg
-                className="w-3 h-3 text-champagne/70"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 9V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3m18 0v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9m18 0h-2M3 9h2m0 0h14M5 9V4m14 5V4"
-                />
-              </svg>
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/70 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-[#6b4a3a]/75">
               tap
             </span>
           </div>
@@ -304,18 +292,18 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
-              background: "oklch(0.16 0.09 280 / 0.95)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-              border: "1px solid oklch(0.86 0.09 85 / 0.20)",
+              background: "linear-gradient(160deg, #fdf6ec 0%, #f3dcc4 100%)",
+              border: "1px solid rgba(201, 123, 99, 0.25)",
             } as React.CSSProperties
           }
         >
-          <span className="font-sans text-[9px] tracking-[0.2em] text-champagne/55 uppercase">
-            a gift for you ✦
+          <span className="font-sans text-[9px] tracking-[0.2em] text-[#a87358]/80 uppercase">
+            a gift for you
           </span>
-          <p className="font-script text-lg leading-snug text-cream sm:text-xl">{item.message}</p>
-          <span className="font-sans text-[8px] text-cream/25 mt-0.5">tap to close</span>
+          <p className="font-script text-lg leading-snug text-[#5a3d2e] sm:text-xl">
+            {item.message}
+          </p>
+          <span className="font-sans text-[8px] text-[#6b4a3a]/45 mt-0.5">tap to close</span>
         </div>
       </motion.div>
     </motion.div>
