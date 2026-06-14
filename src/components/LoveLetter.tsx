@@ -155,7 +155,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex flex-col items-center justify-center px-4"
-            style={{ background: "rgba(15,10,28,0.6)", backdropFilter: "blur(10px)" }}
+            style={{ background: "rgba(60, 35, 20, 0.32)", backdropFilter: "blur(10px)" }}
           >
             <motion.div
               initial={{ scale: 0.9, y: 40, opacity: 0 }}
