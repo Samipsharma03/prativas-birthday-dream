@@ -52,19 +52,18 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
       className="relative min-h-screen w-full overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 20%, oklch(0.32 0.12 330) 0%, oklch(0.18 0.07 295) 55%, #0f0a1c 100%)",
+          "radial-gradient(ellipse at 50% 20%, #fdf6ec 0%, #f4dcc4 55%, #ecc9a8 100%)",
       }}
     >
-      {/* Minimal petal layer — light touch */}
-      <SakuraPetals count={10} />
+      <SakuraPetals count={8} />
 
-      {/* The selenophile's moon 🌙 */}
+      {/* The selenophile's moon */}
       <motion.div
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         className="pointer-events-none absolute left-1/2 top-[7%] -translate-x-1/2 z-0"
       >
-        <Moon size={140} />
+        <Moon size={120} />
       </motion.div>
 
       <AnimatePresence mode="wait">
