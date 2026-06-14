@@ -140,7 +140,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
               <motion.p
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="mt-6 text-center font-sans text-[10px] tracking-[0.3em] text-sakura/85 uppercase"
+                className="mt-6 text-center font-sans text-[10px] tracking-[0.3em] text-[#a87358] uppercase"
               >
                 tap to open
               </motion.p>
