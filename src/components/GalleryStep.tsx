@@ -245,8 +245,9 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
-              background: "linear-gradient(135deg, oklch(0.28 0.10 320), oklch(0.20 0.08 290))",
+              background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)",
               minHeight: "140px",
+              boxShadow: "0 6px 18px -10px rgba(120,70,40,0.25)",
             } as React.CSSProperties
           }
         >
@@ -274,23 +275,10 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             />
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-midnight/50 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 
           <div className="absolute bottom-2 right-2 pointer-events-none">
-            <span className="inline-flex items-center gap-1 rounded-full bg-midnight/65 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-cream/65">
-              <svg
-                className="w-3 h-3 text-champagne/70"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 9V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3m18 0v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9m18 0h-2M3 9h2m0 0h14M5 9V4m14 5V4"
-                />
-              </svg>
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/70 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-[#6b4a3a]/75">
               tap
             </span>
           </div>
@@ -304,18 +292,18 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
-              background: "oklch(0.16 0.09 280 / 0.95)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-              border: "1px solid oklch(0.86 0.09 85 / 0.20)",
+              background: "linear-gradient(160deg, #fdf6ec 0%, #f3dcc4 100%)",
+              border: "1px solid rgba(201, 123, 99, 0.25)",
             } as React.CSSProperties
           }
         >
-          <span className="font-sans text-[9px] tracking-[0.2em] text-champagne/55 uppercase">
-            a gift for you ✦
+          <span className="font-sans text-[9px] tracking-[0.2em] text-[#a87358]/80 uppercase">
+            a gift for you
           </span>
-          <p className="font-script text-lg leading-snug text-cream sm:text-xl">{item.message}</p>
-          <span className="font-sans text-[8px] text-cream/25 mt-0.5">tap to close</span>
+          <p className="font-script text-lg leading-snug text-[#5a3d2e] sm:text-xl">
+            {item.message}
+          </p>
+          <span className="font-sans text-[8px] text-[#6b4a3a]/45 mt-0.5">tap to close</span>
         </div>
       </motion.div>
     </motion.div>
@@ -336,44 +324,28 @@ function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] overflow-hidden">
+    <section ref={ref} className="relative min-h-[70svh] overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-        <img
-          src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80"
-          alt=""
-          loading="eager"
-          className="h-[135%] w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f2a]/70 via-[#2a1438]/40 to-[#0f0a1c]" />
-      </motion.div>
-
-      {/* Falling sakura petals across the hero */}
-      <SakuraPetals count={14} />
-
-
-      {Array.from({ length: 36 }).map((_, i) => (
-        <span
-          key={i}
-          className="pointer-events-none absolute rounded-full bg-champagne/70 animate-twinkle"
+        <div
+          className="h-full w-full"
           style={{
-            width: `${1 + (i % 2)}px`,
-            height: `${1 + (i % 2)}px`,
-            left: `${(i * 47) % 100}%`,
-            top: `${(i * 31) % 88}%`,
-            animationDelay: `${(i % 6) * 0.5}s`,
+            background:
+              "radial-gradient(ellipse at 50% 30%, #fdf6ec 0%, #f4dcc4 60%, #ecc9a8 100%)",
           }}
         />
-      ))}
+      </motion.div>
+
+      <SakuraPetals count={10} />
 
       <motion.div
         style={{ opacity: contentOpacity }}
-        className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-8 text-center"
+        className="relative z-10 flex min-h-[70svh] flex-col items-center justify-center px-8 text-center"
       >
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 1.3, ease: "easeOut" }}
-          className="max-w-[200px] font-sans text-xs leading-relaxed text-cream/55"
+          transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
+          className="max-w-[220px] font-sans text-xs leading-relaxed text-[#6b4a3a]/70"
         >
           scroll through your memories below
         </motion.p>
@@ -388,9 +360,9 @@ function Hero() {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-          className="flex h-8 w-5 items-start justify-center rounded-full border border-cream/25 pt-1.5"
+          className="flex h-8 w-5 items-start justify-center rounded-full border border-[#a87358]/35 pt-1.5"
         >
-          <div className="h-2 w-[3px] rounded-full bg-cream/45" />
+          <div className="h-2 w-[3px] rounded-full bg-[#a87358]/55" />
         </motion.div>
       </motion.div>
     </section>
@@ -408,22 +380,27 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
   return (
     <>
       <Hero />
-      <section className="relative px-4 pb-32 pt-16" style={{ background: "linear-gradient(180deg, #0f0a1c 0%, #1a0f2a 50%, #0f0a1c 100%)" }}>
-        {/* Fixed sakura drifting across the whole gallery as you scroll */}
-        <SakuraPetals count={12} fixed />
-        {/* Premium Gallery Header */}
-        <div className="text-center pt-12 pb-6 px-4 relative z-10">
-          <p className="font-sans text-[10px] tracking-[0.4em] text-sakura uppercase mb-4" style={{ textShadow: "0 0 12px oklch(0.62 0.18 350 / 0.6)" }}>— Chapter I · Petals of memory —</p>
-          <h1 className="text-3xl font-extralight tracking-[0.18em] text-[#fff5f9] uppercase sm:text-4xl md:text-5xl mb-3" style={{ textShadow: "0 2px 24px oklch(0.62 0.18 350 / 0.5)" }}>
+      <section
+        className="relative px-4 pb-32 pt-12"
+        style={{
+          background:
+            "linear-gradient(180deg, #ecc9a8 0%, #fdf6ec 18%, #fdf6ec 82%, #f3dcc4 100%)",
+        }}
+      >
+        <SakuraPetals count={8} fixed />
+        <div className="text-center pt-6 pb-6 px-4 relative z-10">
+          <p className="font-sans text-[10px] tracking-[0.4em] text-[#a87358] uppercase mb-4">
+            — Chapter I · Petals of memory —
+          </p>
+          <h1 className="text-3xl font-extralight tracking-[0.18em] text-[#5a3d2e] uppercase sm:text-4xl md:text-5xl mb-3">
             The Prativa Collection
           </h1>
-          <p className="font-light tracking-wide text-xs sm:text-sm text-white/65 italic max-w-md mx-auto">
+          <p className="font-light tracking-wide text-xs sm:text-sm text-[#6b4a3a]/75 italic max-w-md mx-auto">
             A small gallery dedicated to the girl who carries sunshine wherever she goes.
           </p>
-          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-sakura/60 to-transparent mx-auto mt-6" />
+          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        {/* 2-column uneven masonry grid (preserved exactly as before) */}
         <div className="relative z-10 mx-auto max-w-4xl columns-2 gap-3 md:columns-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
@@ -438,10 +415,10 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onUnlock}
-        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium text-cream"
+        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium tracking-wide text-white"
         style={{
-          background: "linear-gradient(135deg, oklch(0.62 0.20 350), oklch(0.50 0.22 340))",
-          boxShadow: "0 10px 30px -8px oklch(0.62 0.20 350 / 0.55)",
+          background: "linear-gradient(135deg, #c97b63, #a55b46)",
+          boxShadow: "0 10px 26px -10px rgba(150, 80, 50, 0.55)",
         }}
       >
         Let's move ahead

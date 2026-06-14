@@ -72,7 +72,7 @@ function Index() {
 
   return (
     <>
-      <main className="relative min-h-screen overflow-x-hidden bg-midnight text-cream">
+      <main className="relative min-h-screen overflow-x-hidden" style={{ background: "#fdf6ec", color: "#3d2b24" }}>
         <BackgroundMusic />
         <BackButton
           show={currentStep !== "birthdayIntro"}

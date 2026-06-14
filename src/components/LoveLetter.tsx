@@ -52,19 +52,18 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
       className="relative min-h-screen w-full overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 20%, oklch(0.32 0.12 330) 0%, oklch(0.18 0.07 295) 55%, #0f0a1c 100%)",
+          "radial-gradient(ellipse at 50% 20%, #fdf6ec 0%, #f4dcc4 55%, #ecc9a8 100%)",
       }}
     >
-      {/* Minimal petal layer — light touch */}
-      <SakuraPetals count={10} />
+      <SakuraPetals count={8} />
 
-      {/* The selenophile's moon 🌙 */}
+      {/* The selenophile's moon */}
       <motion.div
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         className="pointer-events-none absolute left-1/2 top-[7%] -translate-x-1/2 z-0"
       >
-        <Moon size={140} />
+        <Moon size={120} />
       </motion.div>
 
       <AnimatePresence mode="wait">
@@ -141,7 +140,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
               <motion.p
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="mt-6 text-center font-sans text-[10px] tracking-[0.3em] text-sakura/85 uppercase"
+                className="mt-6 text-center font-sans text-[10px] tracking-[0.3em] text-[#a87358] uppercase"
               >
                 tap to open
               </motion.p>
@@ -156,7 +155,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex flex-col items-center justify-center px-4"
-            style={{ background: "rgba(15,10,28,0.6)", backdropFilter: "blur(10px)" }}
+            style={{ background: "rgba(60, 35, 20, 0.32)", backdropFilter: "blur(10px)" }}
           >
             <motion.div
               initial={{ scale: 0.9, y: 40, opacity: 0 }}
@@ -210,8 +209,8 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
               whileTap={{ scale: 0.95 }}
               className="relative z-10 mt-7 rounded-full px-7 py-3 font-sans text-xs font-semibold uppercase tracking-[0.22em] text-white"
               style={{
-                background: "linear-gradient(135deg, #f49bbc, #e07399)",
-                boxShadow: "0 10px 28px -8px oklch(0.62 0.20 350 / 0.55)",
+                background: "linear-gradient(135deg, #c97b63, #a55b46)",
+                boxShadow: "0 10px 26px -10px rgba(150, 80, 50, 0.55)",
               }}
             >
               Watch Your Video

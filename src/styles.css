@@ -148,16 +148,16 @@
 }
 
 :root {
-  --blush: oklch(0.88 0.06 10);
-  --lavender: oklch(0.82 0.08 300);
-  --champagne: oklch(0.86 0.09 85);
-  --midnight: oklch(0.22 0.08 280);
-  --cream: oklch(0.98 0.02 80);
-  /* Cherry Blossom Night */
-  --sakura: oklch(0.78 0.14 350);
-  --sakura-soft: oklch(0.92 0.06 350);
-  --plum: oklch(0.28 0.10 320);
-  --night: oklch(0.16 0.06 290);
+  /* Warm Minimal — cream, peach, terracotta, soft rose */
+  --blush: oklch(0.90 0.04 30);
+  --lavender: oklch(0.88 0.04 60);
+  --champagne: oklch(0.90 0.06 75);
+  --midnight: oklch(0.32 0.04 35);      /* warm deep brown (text on light) */
+  --cream: oklch(0.97 0.02 75);          /* soft ivory */
+  --sakura: oklch(0.70 0.10 30);         /* terracotta accent */
+  --sakura-soft: oklch(0.88 0.05 35);    /* dusty peach */
+  --plum: oklch(0.82 0.06 55);           /* warm sand */
+  --night: oklch(0.95 0.02 75);          /* cream surface */
 }
 
 @layer base {
@@ -341,15 +341,15 @@
 .petal {
   position: absolute;
   top: 0;
-  width: 14px;
-  height: 14px;
-  background: radial-gradient(ellipse at 30% 30%, var(--sakura-soft) 0%, var(--sakura) 60%, oklch(0.55 0.16 350) 100%);
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(ellipse at 30% 30%, #fff4ea 0%, #f4d4c1 60%, #d8a98e 100%);
   border-radius: 80% 0 80% 0;
   opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
   animation: petal-fall linear infinite;
-  filter: drop-shadow(0 0 4px oklch(0.78 0.14 350 / 0.4));
+  filter: drop-shadow(0 0 3px rgba(200, 140, 110, 0.25));
 }
 .petal::after {
   content: "";
@@ -361,19 +361,18 @@
 .text-shimmer {
   background: linear-gradient(
     100deg,
-    #fff5f9 0%,
-    #fce0ea 25%,
-    #ffffff 50%,
-    #fce0ea 75%,
-    #fff5f9 100%
+    #6b4a3a 0%,
+    #a87358 25%,
+    #6b4a3a 50%,
+    #a87358 75%,
+    #6b4a3a 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: shimmer-sweep 6s linear infinite;
-  filter: drop-shadow(0 1px 12px oklch(0.62 0.18 350 / 0.55));
+  animation: shimmer-sweep 8s linear infinite;
 }
 
 .moon-glow { animation: moon-breath 4s ease-in-out infinite; }
