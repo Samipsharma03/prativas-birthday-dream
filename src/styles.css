@@ -148,16 +148,16 @@
 }
 
 :root {
-  --blush: oklch(0.88 0.06 10);
-  --lavender: oklch(0.82 0.08 300);
-  --champagne: oklch(0.86 0.09 85);
-  --midnight: oklch(0.22 0.08 280);
-  --cream: oklch(0.98 0.02 80);
-  /* Cherry Blossom Night */
-  --sakura: oklch(0.78 0.14 350);
-  --sakura-soft: oklch(0.92 0.06 350);
-  --plum: oklch(0.28 0.10 320);
-  --night: oklch(0.16 0.06 290);
+  /* Warm Minimal — cream, peach, terracotta, soft rose */
+  --blush: oklch(0.90 0.04 30);
+  --lavender: oklch(0.88 0.04 60);
+  --champagne: oklch(0.90 0.06 75);
+  --midnight: oklch(0.32 0.04 35);      /* warm deep brown (text on light) */
+  --cream: oklch(0.97 0.02 75);          /* soft ivory */
+  --sakura: oklch(0.70 0.10 30);         /* terracotta accent */
+  --sakura-soft: oklch(0.88 0.05 35);    /* dusty peach */
+  --plum: oklch(0.82 0.06 55);           /* warm sand */
+  --night: oklch(0.95 0.02 75);          /* cream surface */
 }
 
 @layer base {
