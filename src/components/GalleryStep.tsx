@@ -324,44 +324,28 @@ function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] overflow-hidden">
+    <section ref={ref} className="relative min-h-[70svh] overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-        <img
-          src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80"
-          alt=""
-          loading="eager"
-          className="h-[135%] w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f2a]/70 via-[#2a1438]/40 to-[#0f0a1c]" />
-      </motion.div>
-
-      {/* Falling sakura petals across the hero */}
-      <SakuraPetals count={14} />
-
-
-      {Array.from({ length: 36 }).map((_, i) => (
-        <span
-          key={i}
-          className="pointer-events-none absolute rounded-full bg-champagne/70 animate-twinkle"
+        <div
+          className="h-full w-full"
           style={{
-            width: `${1 + (i % 2)}px`,
-            height: `${1 + (i % 2)}px`,
-            left: `${(i * 47) % 100}%`,
-            top: `${(i * 31) % 88}%`,
-            animationDelay: `${(i % 6) * 0.5}s`,
+            background:
+              "radial-gradient(ellipse at 50% 30%, #fdf6ec 0%, #f4dcc4 60%, #ecc9a8 100%)",
           }}
         />
-      ))}
+      </motion.div>
+
+      <SakuraPetals count={10} />
 
       <motion.div
         style={{ opacity: contentOpacity }}
-        className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-8 text-center"
+        className="relative z-10 flex min-h-[70svh] flex-col items-center justify-center px-8 text-center"
       >
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 1.3, ease: "easeOut" }}
-          className="max-w-[200px] font-sans text-xs leading-relaxed text-cream/55"
+          transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
+          className="max-w-[220px] font-sans text-xs leading-relaxed text-[#6b4a3a]/70"
         >
           scroll through your memories below
         </motion.p>
@@ -376,9 +360,9 @@ function Hero() {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-          className="flex h-8 w-5 items-start justify-center rounded-full border border-cream/25 pt-1.5"
+          className="flex h-8 w-5 items-start justify-center rounded-full border border-[#a87358]/35 pt-1.5"
         >
-          <div className="h-2 w-[3px] rounded-full bg-cream/45" />
+          <div className="h-2 w-[3px] rounded-full bg-[#a87358]/55" />
         </motion.div>
       </motion.div>
     </section>
