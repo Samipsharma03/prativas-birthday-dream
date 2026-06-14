@@ -29,10 +29,10 @@ export function BackButton({ show, label, onClick }: BackButtonProps) {
           transition={{ duration: 0.4, ease: "easeOut" }}
           whileTap={{ scale: 0.94 }}
           aria-label={`Go back to ${label}`}
-          className="fixed left-4 z-[120] inline-flex h-11 items-center gap-2 rounded-full border border-white/15 bg-black/35 px-4 font-sans text-[11px] tracking-[0.22em] text-cream/90 uppercase backdrop-blur-md"
+          className="fixed left-4 z-[120] inline-flex h-11 items-center gap-2 rounded-full border border-[#c97b63]/30 bg-white/70 px-4 font-sans text-[11px] tracking-[0.22em] text-[#6b4a3a] uppercase backdrop-blur-md"
           style={{
             top: "calc(env(safe-area-inset-top, 0px) + 14px)",
-            boxShadow: "0 8px 24px -10px rgba(0,0,0,0.5)",
+            boxShadow: "0 6px 18px -8px rgba(150, 90, 60, 0.35)",
           }}
         >
           <svg
