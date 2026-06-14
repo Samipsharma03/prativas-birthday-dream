@@ -23,16 +23,16 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
       className="relative flex min-h-screen w-full items-center justify-center overflow-hidden px-5 py-12"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 0%, #fff4f7 0%, #fce4ec 45%, #f3d9e6 100%)",
+          "radial-gradient(ellipse at 50% 0%, #fdf6ec 0%, #f4dcc4 50%, #ecc9a8 100%)",
       }}
     >
-      {/* Soft sun/moon glow at top */}
+      {/* Soft warm glow at top */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full opacity-70 blur-3xl"
         style={{
           background:
-            "radial-gradient(circle, #fff 0%, oklch(0.92 0.06 350 / 0.7) 50%, transparent 80%)",
+            "radial-gradient(circle, #fff 0%, rgba(244,212,193,0.7) 50%, transparent 80%)",
         }}
       />
 
@@ -43,7 +43,7 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
         className="relative z-10 mx-auto flex w-full max-w-[440px] flex-col items-center rounded-3xl border border-white/70 bg-white/75 px-7 py-10 text-center backdrop-blur-md"
         style={{
           boxShadow:
-            "0 30px 80px -30px oklch(0.62 0.18 350 / 0.35), 0 0 0 1px oklch(0.78 0.14 350 / 0.08) inset",
+            "0 24px 60px -28px rgba(150, 90, 60, 0.35), 0 0 0 1px rgba(201,123,99,0.08) inset",
         }}
       >
         {/* Tiny moon */}
@@ -54,28 +54,26 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           className="mb-5 flex h-12 w-12 items-center justify-center rounded-full text-2xl"
           style={{
             background:
-              "radial-gradient(circle at 35% 30%, #fff 0%, #fde4ee 70%, #f3c2d4 100%)",
-            boxShadow: "0 6px 22px -6px oklch(0.62 0.18 350 / 0.45)",
+              "radial-gradient(circle at 35% 30%, #fff 0%, #fbe7d0 70%, #e8c19a 100%)",
+            boxShadow: "0 6px 22px -6px rgba(180, 120, 80, 0.45)",
           }}
         >
           🌙
         </motion.div>
 
-        {/* Headline — EDIT */}
         <motion.h1
           initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.9, delay: 0.6, ease: "easeOut" }}
-          className="font-display text-3xl font-light leading-tight text-rose-900 sm:text-4xl"
+          className="font-display text-3xl font-light leading-tight text-[#4a2f22] sm:text-4xl"
         >
           happy birthday,
           <br />
-          <span className="font-script text-4xl italic text-rose-600 sm:text-5xl">
+          <span className="font-script text-4xl italic text-[#a55b46] sm:text-5xl">
             Prativa
           </span>
         </motion.h1>
 
-        {/* Divider */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
@@ -83,32 +81,28 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           className="my-5 h-px w-16 origin-center"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, oklch(0.72 0.16 350) 50%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, #c97b63 50%, transparent 100%)",
           }}
         />
 
-        {/* Sub-message — EDIT */}
         <motion.p
           initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.9, delay: 1.05, ease: "easeOut" }}
-          className="text-[15px] font-light leading-relaxed text-rose-950/75 sm:text-base"
+          className="text-[15px] font-light leading-relaxed text-[#5a3d2e]/85 sm:text-base"
         >
-          {/* ✏️ Replace with your final words */}
           thank you for being you — the gentlest, brightest part of every
           ordinary day. here&apos;s to a year of soft moons, kind mornings,
           and every quiet dream coming true.
         </motion.p>
 
-        {/* Signature */}
         <motion.p
           initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.9, delay: 1.3, ease: "easeOut" }}
-          className="mt-7 flex items-center gap-2 font-script text-lg text-rose-600"
+          className="mt-7 flex items-center gap-2 font-script text-lg text-[#a55b46]"
         >
           <span aria-hidden>♡</span>
-          {/* ✏️ Replace this signature */}
           always, Samip
           <span aria-hidden>♡</span>
         </motion.p>
@@ -121,7 +115,7 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 1.55, ease: "easeOut" }}
             whileTap={{ scale: 0.96 }}
-            className="mt-8 inline-flex items-center gap-2 rounded-full border border-rose-300/60 bg-white/60 px-5 py-2.5 font-sans text-[11px] tracking-[0.25em] text-rose-700/80 uppercase backdrop-blur"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-[#c97b63]/40 bg-white/60 px-5 py-2.5 font-sans text-[11px] tracking-[0.25em] text-[#6b4a3a] uppercase backdrop-blur"
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M20 10A8 8 0 0 0 5.6 7.6M4 14a8 8 0 0 0 14.4 2.4" />
