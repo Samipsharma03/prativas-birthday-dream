@@ -209,8 +209,8 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
               whileTap={{ scale: 0.95 }}
               className="relative z-10 mt-7 rounded-full px-7 py-3 font-sans text-xs font-semibold uppercase tracking-[0.22em] text-white"
               style={{
-                background: "linear-gradient(135deg, #f49bbc, #e07399)",
-                boxShadow: "0 10px 28px -8px oklch(0.62 0.20 350 / 0.55)",
+                background: "linear-gradient(135deg, #c97b63, #a55b46)",
+                boxShadow: "0 10px 26px -10px rgba(150, 80, 50, 0.55)",
               }}
             >
               Watch Your Video
