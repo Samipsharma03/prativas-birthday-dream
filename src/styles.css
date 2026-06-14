@@ -341,15 +341,15 @@
 .petal {
   position: absolute;
   top: 0;
-  width: 14px;
-  height: 14px;
-  background: radial-gradient(ellipse at 30% 30%, var(--sakura-soft) 0%, var(--sakura) 60%, oklch(0.55 0.16 350) 100%);
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(ellipse at 30% 30%, #fff4ea 0%, #f4d4c1 60%, #d8a98e 100%);
   border-radius: 80% 0 80% 0;
   opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
   animation: petal-fall linear infinite;
-  filter: drop-shadow(0 0 4px oklch(0.78 0.14 350 / 0.4));
+  filter: drop-shadow(0 0 3px rgba(200, 140, 110, 0.25));
 }
 .petal::after {
   content: "";
@@ -361,19 +361,18 @@
 .text-shimmer {
   background: linear-gradient(
     100deg,
-    #fff5f9 0%,
-    #fce0ea 25%,
-    #ffffff 50%,
-    #fce0ea 75%,
-    #fff5f9 100%
+    #6b4a3a 0%,
+    #a87358 25%,
+    #6b4a3a 50%,
+    #a87358 75%,
+    #6b4a3a 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: shimmer-sweep 6s linear infinite;
-  filter: drop-shadow(0 1px 12px oklch(0.62 0.18 350 / 0.55));
+  animation: shimmer-sweep 8s linear infinite;
 }
 
 .moon-glow { animation: moon-breath 4s ease-in-out infinite; }
