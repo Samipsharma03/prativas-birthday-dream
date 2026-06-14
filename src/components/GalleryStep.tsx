@@ -270,7 +270,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 decoding="async"
                 draggable={false}
                 className="block w-full h-auto object-cover"
-                style={{ aspectRatio: "auto", opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
+                style={{ aspectRatio: "3 / 4", opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
                 onLoad={() => setIsLoaded(true)}
               />
             </div>
