@@ -156,6 +156,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -252,27 +253,56 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
           }
         >
           {item.type === "image" ? (
-            <img
-              src={item.src}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              draggable={false}
-              className="block w-full h-auto object-cover"
-              style={{ aspectRatio: "auto" }}
-            />
+            <div className="relative">
+              {!isLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
+                  <div className="flex items-center gap-1">
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite" }} />
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.2s" }} />
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.4s" }} />
+                  </div>
+                </div>
+              )}
+              <img
+                src={item.src}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className="block w-full h-auto object-cover"
+                style={{ aspectRatio: "auto", opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
+                onLoad={() => setIsLoaded(true)}
+              />
+            </div>
           ) : (
-            <video
-              ref={videoRef}
-              src={videoSrc ?? undefined}
-              poster={item.poster}
-              muted
-              loop
-              playsInline
-              preload="none"
-              className="block w-full h-auto object-cover"
-              style={{ aspectRatio: "3 / 4" }}
-            />
+            <div className="relative">
+              {!isLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
+                  <div className="flex items-center gap-1">
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite" }} />
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.2s" }} />
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.4s" }} />
+                  </div>
+                </div>
+              )}
+              <video
+                ref={videoRef}
+                src={videoSrc ?? undefined}
+                poster={item.poster}
+                muted
+                loop
+                playsInline
+                preload="none"
+                className="block w-full h-auto object-cover"
+                style={{
+                  aspectRatio: "3 / 4",
+                  opacity: isLoaded ? 1 : 0,
+                  transition: "opacity 0.2s ease",
+                }}
+                onLoadedData={() => setIsLoaded(true)}
+                onCanPlay={() => setIsLoaded(true)}
+              />
+            </div>
           )}
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
