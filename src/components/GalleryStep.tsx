@@ -220,7 +220,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   return (
     <motion.div
       ref={cardRef}
-      className="mb-2 break-inside-avoid cursor-pointer"
+      className="cursor-pointer"
       initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-25px" }}
