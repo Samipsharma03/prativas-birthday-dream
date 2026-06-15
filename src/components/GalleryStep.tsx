@@ -429,7 +429,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-2 sm:gap-3 md:grid-cols-3">
+        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-x-2 sm:gap-x-3 gap-y-1 md:grid-cols-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
