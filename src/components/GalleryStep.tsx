@@ -314,7 +314,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
 
         {/* BACK */}
         <div
-          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2.5 px-4 py-5 text-center min-h-[120px]"
+          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2.5 px-4 py-5 text-center"
           style={
             {
               backfaceVisibility: "hidden",
@@ -429,7 +429,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-x-2 sm:gap-x-3 gap-y-1 md:grid-cols-3">
+        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-x-1 sm:gap-x-2 gap-y-0.5 md:grid-cols-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
