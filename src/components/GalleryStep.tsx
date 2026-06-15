@@ -236,12 +236,13 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
           {
             transformStyle: "preserve-3d",
             WebkitTransformStyle: "preserve-3d",
+            aspectRatio: "1/1",
           } as React.CSSProperties
         }
       >
         {/* FRONT */}
         <div
-          className="relative rounded-2xl overflow-hidden"
+          className="relative rounded-2xl overflow-hidden h-full w-full"
           style={
             {
               backfaceVisibility: "hidden",
@@ -252,7 +253,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
           }
         >
           {item.type === "image" ? (
-            <div className="relative">
+            <div className="relative w-full h-full">
               {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
                   <div className="flex items-center gap-1">
@@ -268,13 +269,13 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 loading="lazy"
                 decoding="async"
                 draggable={false}
-                className="block w-full h-auto object-cover"
+                className="w-full h-full object-cover"
                 style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
                 onLoad={() => setIsLoaded(true)}
               />
             </div>
           ) : (
-            <div className="relative">
+            <div className="relative w-full h-full">
               {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
                   <div className="flex items-center gap-1">
@@ -292,7 +293,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 loop
                 playsInline
                 preload="none"
-                className="block w-full h-auto object-cover"
+                className="w-full h-full object-cover"
                 style={{
                   opacity: isLoaded ? 1 : 0,
                   transition: "opacity 0.2s ease",
@@ -314,7 +315,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
 
         {/* BACK */}
         <div
-          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2.5 px-4 py-5 text-center"
+          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2 px-3 py-4 text-center overflow-hidden"
           style={
             {
               backfaceVisibility: "hidden",
@@ -325,13 +326,13 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             } as React.CSSProperties
           }
         >
-          <span className="font-sans text-[9px] tracking-[0.2em] text-[#a87358]/80 uppercase">
+          <span className="font-sans text-[8px] tracking-[0.2em] text-[#a87358]/80 uppercase flex-shrink-0">
             a gift for you
           </span>
-          <p className="font-script text-lg leading-snug text-[#5a3d2e] sm:text-xl">
+          <p className="font-script text-xs leading-tight text-[#5a3d2e] sm:text-sm flex-grow flex items-center justify-center overflow-hidden line-clamp-6">
             {item.message}
           </p>
-          <span className="font-sans text-[8px] text-[#6b4a3a]/45 mt-0.5">tap to close</span>
+          <span className="font-sans text-[7px] text-[#6b4a3a]/45 flex-shrink-0">tap to close</span>
         </div>
       </motion.div>
     </motion.div>
@@ -429,7 +430,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-max">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
