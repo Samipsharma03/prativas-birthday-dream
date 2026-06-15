@@ -236,13 +236,12 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
           {
             transformStyle: "preserve-3d",
             WebkitTransformStyle: "preserve-3d",
-            aspectRatio: "1/1",
           } as React.CSSProperties
         }
       >
         {/* FRONT */}
         <div
-          className="relative rounded-2xl overflow-hidden h-full w-full"
+          className="relative rounded-2xl overflow-hidden"
           style={
             {
               backfaceVisibility: "hidden",
@@ -253,7 +252,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
           }
         >
           {item.type === "image" ? (
-            <div className="relative w-full h-full">
+            <div className="relative">
               {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
                   <div className="flex items-center gap-1">
@@ -269,13 +268,13 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 loading="lazy"
                 decoding="async"
                 draggable={false}
-                className="w-full h-full object-cover"
+                className="block w-full h-auto object-cover"
                 style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
                 onLoad={() => setIsLoaded(true)}
               />
             </div>
           ) : (
-            <div className="relative w-full h-full">
+            <div className="relative">
               {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
                   <div className="flex items-center gap-1">
@@ -293,7 +292,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 loop
                 playsInline
                 preload="none"
-                className="w-full h-full object-cover"
+                className="block w-full h-auto object-cover"
                 style={{
                   opacity: isLoaded ? 1 : 0,
                   transition: "opacity 0.2s ease",
@@ -430,7 +429,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-max">
+        <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
