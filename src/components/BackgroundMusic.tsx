@@ -63,19 +63,32 @@ export function BackgroundMusic() {
       "pointerdown",
       "click",
       "touchstart",
+      "touchend",
       "keydown",
       "scroll",
     ];
+    // NOT once:true — keep retrying until audio actually starts (mobile
+    // sometimes ignores the first gesture if audio isn't decoded yet).
+    const cleanup = () => {
+      events.forEach((e) => window.removeEventListener(e, onFirstInteraction, true));
+    };
     events.forEach((e) =>
       window.addEventListener(e, onFirstInteraction, {
-        once: true,
         passive: true,
         capture: true,
       }),
     );
+    // Poll: once started, remove the listeners.
+    const poll = window.setInterval(() => {
+      if (startedRef.current) {
+        cleanup();
+        window.clearInterval(poll);
+      }
+    }, 250);
 
     return () => {
-      events.forEach((e) => window.removeEventListener(e, onFirstInteraction, true));
+      cleanup();
+      window.clearInterval(poll);
       audio.pause();
       audioRef.current = null;
       if (fadeFrameRef.current !== null) {
