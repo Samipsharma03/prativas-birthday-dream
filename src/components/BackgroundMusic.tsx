@@ -87,7 +87,8 @@ export function BackgroundMusic() {
     }, 250);
 
     return () => {
-      events.forEach((e) => window.removeEventListener(e, onFirstInteraction, true));
+      cleanup();
+      window.clearInterval(poll);
       audio.pause();
       audioRef.current = null;
       if (fadeFrameRef.current !== null) {
