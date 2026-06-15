@@ -15,6 +15,9 @@ import { SakuraPetals } from "./SakuraPetals";
  *     box, a pulsing heart icon and a stylized "Let's move ahead"
  *     button. Clicking it calls `onUnlock` to transition to step 2 while
  *     background music continues uninterrupted.
+ *
+ * Redesigned Gallery: Pinterest-style masonry grid with original aspect ratios,
+ * enhanced premium aesthetics, refined hover effects, and elegant spacing.
  */
 
 interface GalleryStepProps {
@@ -33,7 +36,7 @@ interface MediaItem {
   src: string;
   poster?: string;
   message: string;
-  wide: boolean;
+  wide: boolean; // preserved for metadata but not used in masonry layout
 }
 
 const IMAGE_FILES = import.meta.glob("/public/images/gallery-*", {
@@ -149,7 +152,9 @@ const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
 });
 
 /* ════════════════════════════════════════════════════════════════ */
-/*    GIFT CARD
+/*    PREMIUM GIFT CARD
+ *    Redesigned with elegant hover effects, original aspect ratios,
+ *    sophisticated shadows, and refined flip interaction.
  *    ════════════════════════════════════════════════════════════════ */
 
 function GiftCard({ item, index }: { item: MediaItem; index: number }) {
@@ -220,118 +225,106 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   return (
     <motion.div
       ref={cardRef}
-      className="w-full cursor-pointer"
-      initial={{ opacity: 0, y: 22 }}
+      className="w-full cursor-pointer group/card"
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-25px" }}
-      transition={{ duration: 0.55, delay: (index % 4) * 0.07, ease: "easeOut" }}
+      viewport={{ once: true, margin: "-20px" }}
+      transition={{ duration: 0.5, delay: (index % 5) * 0.06, ease: [0.25, 0.1, 0.1, 1] }}
       onClick={() => setIsFlipped((f) => !f)}
-      style={{ perspective: "1200px" }}
+      style={{ perspective: "1600px" }}
     >
       <motion.div
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: prefersReduced ? 0 : 0.6, ease: [0.23, 1, 0.32, 1] }}
+        transition={{ duration: prefersReduced ? 0 : 0.65, ease: [0.23, 1, 0.32, 1] }}
         className="relative w-full"
-        style={
-          {
-            transformStyle: "preserve-3d",
-            WebkitTransformStyle: "preserve-3d",
-          } as React.CSSProperties
-        }
+        style={{
+          transformStyle: "preserve-3d",
+          WebkitTransformStyle: "preserve-3d",
+        }}
       >
-        {/* FRONT */}
+        {/* FRONT - Premium image/video container */}
         <div
-          className="relative rounded-2xl overflow-hidden"
-          style={
-            {
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)",
-              boxShadow: "0 6px 18px -10px rgba(120,70,40,0.25)",
-            } as React.CSSProperties
-          }
+          className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500 ease-out"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            backgroundColor: "#faf3ea",
+          }}
         >
-          {item.type === "image" ? (
-            <div className="relative">
-              {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
-                  <div className="flex items-center gap-1">
-                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite" }} />
-                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.2s" }} />
-                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.4s" }} />
-                  </div>
-                </div>
-              )}
-              <img
-                src={item.src}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-                className="block w-full h-auto object-cover"
-                style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
-                onLoad={() => setIsLoaded(true)}
-              />
-            </div>
-          ) : (
-            <div className="relative">
-              {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)" }}>
-                  <div className="flex items-center gap-1">
-                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite" }} />
-                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.2s" }} />
-                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-[#a87358]/70" style={{ animation: "pulse-dot 1.2s ease-in-out infinite 0.4s" }} />
-                  </div>
-                </div>
-              )}
-              <video
-                ref={videoRef}
-                src={videoSrc ?? undefined}
-                poster={item.poster}
-                muted
-                loop
-                playsInline
-                preload="none"
-                className="block w-full h-auto object-cover"
-                style={{
-                  opacity: isLoaded ? 1 : 0,
-                  transition: "opacity 0.2s ease",
-                }}
-                onLoadedData={() => setIsLoaded(true)}
-                onCanPlay={() => setIsLoaded(true)}
-              />
+          {/* Subtle inner border on hover */}
+          <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5 pointer-events-none z-10" />
+          
+          {/* Loading shimmer effect */}
+          {!isLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-50/80 to-stone-100/80 z-0">
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" style={{ animationDelay: "0ms" }} />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" style={{ animationDelay: "200ms" }} />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" style={{ animationDelay: "400ms" }} />
+              </div>
             </div>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+          {item.type === "image" ? (
+            <img
+              src={item.src}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="block w-full h-auto object-cover transition-transform duration-700 group-hover/card:scale-[1.02]"
+              style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+              onLoad={() => setIsLoaded(true)}
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              src={videoSrc ?? undefined}
+              poster={item.poster}
+              muted
+              loop
+              playsInline
+              preload="none"
+              className="block w-full h-auto object-cover transition-transform duration-700 group-hover/card:scale-[1.02]"
+              style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+              onLoadedData={() => setIsLoaded(true)}
+              onCanPlay={() => setIsLoaded(true)}
+            />
+          )}
 
-          <div className="absolute bottom-2 right-2 pointer-events-none">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/70 backdrop-blur-sm px-2 py-0.5 font-sans text-[9px] tracking-widest text-[#6b4a3a]/75">
+          {/* Elegant gradient overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          
+          {/* Minimalist tap indicator */}
+          <div className="absolute bottom-3 right-3 pointer-events-none z-10">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/60 backdrop-blur-sm px-2 py-0.5 font-sans text-[8px] font-medium tracking-wider text-stone-600/80 shadow-sm">
               tap
             </span>
           </div>
         </div>
 
-        {/* BACK */}
+        {/* BACK - Romantic message panel with refined aesthetics */}
         <div
-          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2 px-3 py-4 text-center overflow-hidden"
-          style={
-            {
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
-              background: "linear-gradient(160deg, #fdf6ec 0%, #f3dcc4 100%)",
-              border: "1px solid rgba(201, 123, 99, 0.25)",
-            } as React.CSSProperties
-          }
+          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-3 px-4 py-5 text-center overflow-hidden"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            background: "radial-gradient(circle at 30% 20%, #fffaf5, #f7ede3)",
+            border: "1px solid rgba(225, 185, 155, 0.4)",
+            boxShadow: "inset 0 1px 4px rgba(255,255,245,0.8), 0 8px 20px -8px rgba(0,0,0,0.15)",
+          }}
         >
-          <span className="font-sans text-[8px] tracking-[0.2em] text-[#a87358]/80 uppercase flex-shrink-0">
-            a gift for you
+          <div className="w-8 h-px bg-gradient-to-r from-transparent via-rose-300/60 to-transparent" />
+          <span className="font-sans text-[9px] tracking-[0.25em] text-rose-700/60 uppercase">
+            a whisper from the heart
           </span>
-          <p className="font-script text-xs leading-tight text-[#5a3d2e] sm:text-sm flex-grow flex items-center justify-center overflow-hidden line-clamp-6">
+          <p className="font-serif text-sm leading-relaxed text-stone-700 max-w-[90%] mx-auto my-1 line-clamp-6">
             {item.message}
           </p>
-          <span className="font-sans text-[7px] text-[#6b4a3a]/45 flex-shrink-0">tap to close</span>
+          <div className="flex items-center gap-1 text-rose-400/50 text-[10px]">
+            <span>✦</span> <span className="text-[8px] tracking-wide">double-tap to close</span> <span>✦</span>
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -339,7 +332,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
 }
 
 /* ════════════════════════════════════════════════════════════════ */
-/*    HERO
+/*    HERO - Parallax section with sakura petals
  *    ════════════════════════════════════════════════════════════════ */
 
 function Hero() {
@@ -363,7 +356,7 @@ function Hero() {
         />
       </motion.div>
 
-      <SakuraPetals count={10} />
+      <SakuraPetals count={12} />
 
       <motion.div
         style={{ opacity: contentOpacity }}
@@ -373,7 +366,7 @@ function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
-          className="max-w-[220px] font-sans text-xs leading-relaxed text-[#6b4a3a]/70"
+          className="max-w-[240px] font-sans text-xs tracking-wider text-stone-600/70"
         >
           scroll through your memories below
         </motion.p>
@@ -388,14 +381,18 @@ function Hero() {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-          className="flex h-8 w-5 items-start justify-center rounded-full border border-[#a87358]/35 pt-1.5"
+          className="flex h-8 w-5 items-start justify-center rounded-full border border-rose-300/40 pt-1.5"
         >
-          <div className="h-2 w-[3px] rounded-full bg-[#a87358]/55" />
+          <div className="h-2 w-[3px] rounded-full bg-rose-400/60" />
         </motion.div>
       </motion.div>
     </section>
   );
 }
+
+/* ════════════════════════════════════════════════════════════════ */
+/*    MAIN GALLERY STEP - Pinterest Style Masonry Grid
+ *    ════════════════════════════════════════════════════════════════ */
 
 export function GalleryStep({ onUnlock }: GalleryStepProps) {
   const [showUnlockHint, setShowUnlockHint] = useState(false);
@@ -409,47 +406,84 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
     <>
       <Hero />
       <section
-        className="relative px-4 pb-32 pt-12"
+        className="relative px-4 pb-36 pt-12"
         style={{
-          background:
-            "linear-gradient(180deg, #ecc9a8 0%, #fdf6ec 18%, #fdf6ec 82%, #f3dcc4 100%)",
+          background: "linear-gradient(180deg, #ecc9a8 0%, #fdf6ec 12%, #fdf6ec 85%, #f3dcc4 100%)",
         }}
       >
-        <SakuraPetals count={8} fixed />
-        <div className="text-center pt-6 pb-6 px-4 relative z-10">
-          <p className="font-sans text-[10px] tracking-[0.4em] text-[#a87358] uppercase mb-4">
+        <SakuraPetals count={6} fixed />
+        
+        {/* Gallery Header */}
+        <div className="text-center pt-6 pb-10 px-4 relative z-10 max-w-4xl mx-auto">
+          <p className="font-sans text-[11px] tracking-[0.4em] text-rose-700/50 uppercase mb-5">
             — Chapter I · Petals of memory —
           </p>
-          <h1 className="text-3xl font-extralight tracking-[0.18em] text-[#5a3d2e] uppercase sm:text-4xl md:text-5xl mb-3">
+          <h1 className="text-3xl font-light tracking-[0.18em] text-stone-700 uppercase sm:text-4xl md:text-5xl mb-4">
             The Prativa Collection
           </h1>
-          <p className="font-light tracking-wide text-xs sm:text-sm text-[#6b4a3a]/75 italic max-w-md mx-auto">
+          <p className="font-serif text-sm text-stone-600/70 italic max-w-md mx-auto">
             A small gallery dedicated to the girl who carries sunshine wherever she goes.
           </p>
-          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
+          <div className="w-20 h-px bg-gradient-to-r from-transparent via-rose-400/40 to-transparent mx-auto mt-7" />
         </div>
 
-        <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {MEDIA.map((item, index) => (
-            <GiftCard key={index} item={item} index={index} />
-          ))}
+        {/* MASONRY GRID - Pinterest-style columns preserving original aspect ratios */}
+        <div className="max-w-7xl mx-auto">
+          {/* 
+            CSS Multi-Column Layout creates true Pinterest-style waterfall grid.
+            Each item keeps its intrinsic height (original aspect ratio).
+            Responsive breakpoints: 2 columns (mobile), 3 columns (tablet), 4 columns (desktop).
+            Elegant spacing, break-inside to prevent card splitting across columns.
+          */}
+          <div 
+            className="columns-2 sm:columns-3 xl:columns-4 gap-x-5 [&>div]:mb-5"
+            style={{ 
+              columnGap: "1.25rem",
+            }}
+          >
+            {MEDIA.map((item, index) => (
+              <div 
+                key={index} 
+                className="break-inside-avoid"
+                style={{ 
+                  breakInside: "avoid",
+                  marginBottom: "1.25rem",
+                }}
+              >
+                <GiftCard item={item} index={index} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Decorative end note */}
+        <div className="relative z-10 text-center mt-16 opacity-60">
+          <p className="font-serif text-[11px] tracking-[0.25em] text-stone-500 uppercase">
+            ∞ every moment with you is a treasure ∞
+          </p>
         </div>
       </section>
 
+      {/* Premium Floating CTA Button */}
       <motion.button
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: showUnlockHint ? 1 : 0, scale: showUnlockHint ? 1 : 0.9 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: showUnlockHint ? 1 : 0, scale: showUnlockHint ? 1 : 0.92 }}
+        transition={{ duration: 0.6, ease: "anticipate" }}
+        whileHover={{ scale: 1.04, boxShadow: "0 20px 30px -12px rgba(150, 70, 40, 0.5)" }}
+        whileTap={{ scale: 0.96 }}
         onClick={onUnlock}
-        className="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2.5 font-sans text-xs font-medium tracking-wide text-white"
+        className="fixed bottom-8 left-1/2 z-30 -translate-x-1/2 rounded-full px-7 py-3 font-sans text-sm font-medium tracking-wide text-white backdrop-blur-sm"
         style={{
-          background: "linear-gradient(135deg, #c97b63, #a55b46)",
-          boxShadow: "0 10px 26px -10px rgba(150, 80, 50, 0.55)",
+          background: "linear-gradient(115deg, #d48d72, #b16248)",
+          boxShadow: "0 12px 28px -12px rgba(120, 60, 35, 0.6)",
+          border: "1px solid rgba(255,245,235,0.3)",
         }}
       >
-        Let's move ahead
+        <span className="flex items-center gap-2">
+          <span className="text-base">🌸</span>
+          Let's move ahead
+          <span className="text-base">✨</span>
+        </span>
       </motion.button>
     </>
   );
