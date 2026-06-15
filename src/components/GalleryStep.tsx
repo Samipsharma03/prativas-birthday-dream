@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, ReactNode } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { SakuraPetals } from "./SakuraPetals";
 
@@ -9,15 +9,10 @@ import { SakuraPetals } from "./SakuraPetals";
  *
  * Contains:
  *   • A parallax Hero section with twinkling stars.
- *   • The 35-card masonry gallery of gifts (auto-discovered from
- *     /images and /videos).
- *   • A luxurious, premium CTA section at the bottom with a glassmorphism
- *     box, a pulsing heart icon and a stylized "Let's move ahead"
- *     button. Clicking it calls `onUnlock` to transition to step 2 while
- *     background music continues uninterrupted.
- *
- * Redesigned Gallery: Pinterest-style masonry grid with original aspect ratios,
- * enhanced premium aesthetics, refined hover effects, and elegant spacing.
+ *   • A premium Pinterest-style MASONRY GRID that works flawlessly with any number of photos.
+ *   • Each card preserves original aspect ratio (no cropping, no distortion).
+ *   • Flip-to-read romantic messages with scrollable text (no overflow).
+ *   • A luxurious CTA button to proceed.
  */
 
 interface GalleryStepProps {
@@ -25,10 +20,7 @@ interface GalleryStepProps {
 }
 
 /* ════════════════════════════════════════════════════════════════ */
-/*     AUTO-DISCOVERY
- *     The gallery auto-discovers files in /images/ and /videos/.
- *     Drop a `gallery-XX.jpg` (or .png/.webp) into /images/ or a
- *     `gallery-XX.mp4` into /videos/ and it appears automatically.
+/*     AUTO-DISCOVERY – unchanged
  *     ════════════════════════════════════════════════════════════════ */
 
 interface MediaItem {
@@ -36,7 +28,7 @@ interface MediaItem {
   src: string;
   poster?: string;
   message: string;
-  wide: boolean; // preserved for metadata but not used in masonry layout
+  wide: boolean; // preserved for metadata
 }
 
 const IMAGE_FILES = import.meta.glob("/public/images/gallery-*", {
@@ -72,7 +64,6 @@ const ALL_SLOTS = Array.from(
   new Set([...Object.keys(imageBySlot), ...Object.keys(videoBySlot)]),
 ).sort((a, b) => Number(a) - Number(b));
 
-/* Per-slot customisation. */
 const SLOT_META: Record<string, { message?: string; wide?: boolean }> = {
   "01": { wide: true },
   "06": { wide: true },
@@ -152,23 +143,44 @@ const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
 });
 
 /* ════════════════════════════════════════════════════════════════ */
-/*    PREMIUM GIFT CARD
- *    Redesigned with elegant hover effects, original aspect ratios,
- *    sophisticated shadows, and refined flip interaction.
+/*    GIFT CARD – with scrollable message (no overflow)
  *    ════════════════════════════════════════════════════════════════ */
 
-function GiftCard({ item, index }: { item: MediaItem; index: number }) {
+function GiftCard({ item, index, onHeightMeasured }: { 
+  item: MediaItem; 
+  index: number;
+  onHeightMeasured?: (index: number, height: number) => void;
+}) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReduced = useReducedMotion();
-
   const isFlippedRef = useRef(false);
   isFlippedRef.current = isFlipped;
+
+  // Report height to masonry after image loads
+  useEffect(() => {
+    if (!onHeightMeasured) return;
+    if (!cardRef.current) return;
+    // Use ResizeObserver to get accurate height after content loads
+    const resizeObserver = new ResizeObserver((entries) => {
+      const height = entries[0]?.contentRect.height;
+      if (height) onHeightMeasured(index, height);
+    });
+    resizeObserver.observe(cardRef.current);
+    return () => resizeObserver.disconnect();
+  }, [index, onHeightMeasured]);
+
+  // Also report when isLoaded becomes true (image fully loaded)
+  useEffect(() => {
+    if (isLoaded && cardRef.current && onHeightMeasured) {
+      const height = cardRef.current.offsetHeight;
+      if (height) onHeightMeasured(index, height);
+    }
+  }, [isLoaded, index, onHeightMeasured]);
 
   useEffect(() => {
     if (item.type !== "video") return;
@@ -226,23 +238,23 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
     <motion.div
       ref={cardRef}
       className="w-full cursor-pointer group/card"
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-20px" }}
-      transition={{ duration: 0.5, delay: (index % 5) * 0.06, ease: [0.25, 0.1, 0.1, 1] }}
+      transition={{ duration: 0.4, delay: Math.min((index % 8) * 0.05, 0.4), ease: [0.25, 0.1, 0.1, 1] }}
       onClick={() => setIsFlipped((f) => !f)}
       style={{ perspective: "1600px" }}
     >
       <motion.div
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: prefersReduced ? 0 : 0.65, ease: [0.23, 1, 0.32, 1] }}
+        transition={{ duration: prefersReduced ? 0 : 0.6, ease: [0.23, 1, 0.32, 1] }}
         className="relative w-full"
         style={{
           transformStyle: "preserve-3d",
           WebkitTransformStyle: "preserve-3d",
         }}
       >
-        {/* FRONT - Premium image/video container */}
+        {/* FRONT */}
         <div
           className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500 ease-out"
           style={{
@@ -251,20 +263,16 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             backgroundColor: "#faf3ea",
           }}
         >
-          {/* Subtle inner border on hover */}
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5 pointer-events-none z-10" />
-          
-          {/* Loading shimmer effect */}
           {!isLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-50/80 to-stone-100/80 z-0">
               <div className="flex items-center gap-1.5">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" style={{ animationDelay: "0ms" }} />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" />
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" style={{ animationDelay: "200ms" }} />
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-300/60 animate-pulse" style={{ animationDelay: "400ms" }} />
               </div>
             </div>
           )}
-
           {item.type === "image" ? (
             <img
               src={item.src}
@@ -291,11 +299,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               onCanPlay={() => setIsLoaded(true)}
             />
           )}
-
-          {/* Elegant gradient overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
-          
-          {/* Minimalist tap indicator */}
           <div className="absolute bottom-3 right-3 pointer-events-none z-10">
             <span className="inline-flex items-center gap-1 rounded-full bg-white/60 backdrop-blur-sm px-2 py-0.5 font-sans text-[8px] font-medium tracking-wider text-stone-600/80 shadow-sm">
               tap
@@ -303,9 +307,9 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
           </div>
         </div>
 
-        {/* BACK - Romantic message panel with refined aesthetics */}
+        {/* BACK - with scrollable message */}
         <div
-          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-3 px-4 py-5 text-center overflow-hidden"
+          className="absolute inset-0 rounded-2xl flex flex-col items-center justify-start gap-2 px-3 py-4 text-center overflow-hidden"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
@@ -315,15 +319,17 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
             boxShadow: "inset 0 1px 4px rgba(255,255,245,0.8), 0 8px 20px -8px rgba(0,0,0,0.15)",
           }}
         >
-          <div className="w-8 h-px bg-gradient-to-r from-transparent via-rose-300/60 to-transparent" />
-          <span className="font-sans text-[9px] tracking-[0.25em] text-rose-700/60 uppercase">
+          <div className="w-8 h-px bg-gradient-to-r from-transparent via-rose-300/60 to-transparent flex-shrink-0" />
+          <span className="font-sans text-[9px] tracking-[0.25em] text-rose-700/60 uppercase flex-shrink-0">
             a whisper from the heart
           </span>
-          <p className="font-serif text-sm leading-relaxed text-stone-700 max-w-[90%] mx-auto my-1 line-clamp-6">
-            {item.message}
-          </p>
-          <div className="flex items-center gap-1 text-rose-400/50 text-[10px]">
-            <span>✦</span> <span className="text-[8px] tracking-wide">double-tap to close</span> <span>✦</span>
+          <div className="flex-1 w-full overflow-y-auto my-1 scrollbar-thin scrollbar-thumb-rose-300/40 scrollbar-track-transparent">
+            <p className="font-serif text-xs sm:text-sm leading-relaxed text-stone-700 px-1">
+              {item.message}
+            </p>
+          </div>
+          <div className="flex items-center gap-1 text-rose-400/50 text-[10px] flex-shrink-0 mt-1">
+            <span>✦</span> <span className="text-[8px] tracking-wide">tap to close</span> <span>✦</span>
           </div>
         </div>
       </motion.div>
@@ -332,7 +338,124 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
 }
 
 /* ════════════════════════════════════════════════════════════════ */
-/*    HERO - Parallax section with sakura petals
+/*    MASONRY GRID – robust, JS-powered, handles any number of items
+ *    ════════════════════════════════════════════════════════════════ */
+
+interface MasonryGridProps {
+  children: ReactNode[];
+  columnCount: number;
+  gap: number;
+}
+
+function MasonryGrid({ children, columnCount, gap }: MasonryGridProps) {
+  const [columnHeights, setColumnHeights] = useState<number[]>(Array(columnCount).fill(0));
+  const [itemPositions, setItemPositions] = useState<{ top: number; left: number; width: number }[]>([]);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemHeights = useRef<Map<number, number>>(new Map());
+  const animationFrameRef = useRef<number>();
+
+  // Update column widths on resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width) setContainerWidth(width);
+    });
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const updateLayout = useCallback(() => {
+    if (!containerWidth) return;
+    const colWidth = (containerWidth - gap * (columnCount - 1)) / columnCount;
+    const newHeights = Array(columnCount).fill(0);
+    const newPositions: typeof itemPositions = [];
+
+    children.forEach((_, idx) => {
+      const height = itemHeights.current.get(idx) || 0;
+      // Find column with smallest height
+      let minCol = 0;
+      for (let i = 1; i < columnCount; i++) {
+        if (newHeights[i] < newHeights[minCol]) minCol = i;
+      }
+      const left = minCol * (colWidth + gap);
+      const top = newHeights[minCol];
+      newPositions.push({ top, left, width: colWidth });
+      newHeights[minCol] += height + gap;
+    });
+
+    setItemPositions(newPositions);
+    setColumnHeights(newHeights);
+  }, [children, containerWidth, columnCount, gap]);
+
+  // Debounced layout update
+  useEffect(() => {
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    animationFrameRef.current = requestAnimationFrame(updateLayout);
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [updateLayout]);
+
+  const handleHeightMeasured = useCallback((index: number, height: number) => {
+    const oldHeight = itemHeights.current.get(index);
+    if (oldHeight !== height) {
+      itemHeights.current.set(index, height);
+      updateLayout();
+    }
+  }, [updateLayout]);
+
+  // Wrap children with height measurement
+  const measuredChildren = children.map((child, idx) => (
+    <div
+      key={idx}
+      ref={(el) => {
+        if (!el) return;
+        // Force height measurement after child mounts
+        const measure = () => {
+          const h = el.offsetHeight;
+          if (h) handleHeightMeasured(idx, h);
+        };
+        measure();
+        // Use ResizeObserver for dynamic changes
+        const ro = new ResizeObserver(measure);
+        ro.observe(el);
+        return () => ro.disconnect();
+      }}
+    >
+      {child}
+    </div>
+  ));
+
+  const containerHeight = Math.max(...columnHeights, 0);
+
+  return (
+    <div ref={containerRef} className="relative w-full" style={{ height: containerHeight }}>
+      {measuredChildren.map((child, idx) => {
+        const pos = itemPositions[idx];
+        if (!pos) return null;
+        return (
+          <div
+            key={idx}
+            className="absolute"
+            style={{
+              top: pos.top,
+              left: pos.left,
+              width: pos.width,
+              transition: "all 0.2s ease-out",
+            }}
+          >
+            {child}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════ */
+/*    HERO – unchanged
  *    ════════════════════════════════════════════════════════════════ */
 
 function Hero() {
@@ -355,9 +478,7 @@ function Hero() {
           }}
         />
       </motion.div>
-
       <SakuraPetals count={12} />
-
       <motion.div
         style={{ opacity: contentOpacity }}
         className="relative z-10 flex min-h-[70svh] flex-col items-center justify-center px-8 text-center"
@@ -371,7 +492,6 @@ function Hero() {
           scroll through your memories below
         </motion.p>
       </motion.div>
-
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -391,15 +511,29 @@ function Hero() {
 }
 
 /* ════════════════════════════════════════════════════════════════ */
-/*    MAIN GALLERY STEP - Pinterest Style Masonry Grid
+/*    MAIN GALLERY STEP – uses robust MasonryGrid
  *    ════════════════════════════════════════════════════════════════ */
 
 export function GalleryStep({ onUnlock }: GalleryStepProps) {
   const [showUnlockHint, setShowUnlockHint] = useState(false);
+  const [columnCount, setColumnCount] = useState(3);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowUnlockHint(true), 5000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Responsive column count
+  useEffect(() => {
+    const updateColumns = () => {
+      const width = window.innerWidth;
+      if (width < 640) setColumnCount(2);
+      else if (width < 1024) setColumnCount(3);
+      else setColumnCount(4);
+    };
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
   }, []);
 
   return (
@@ -413,7 +547,6 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
       >
         <SakuraPetals count={6} fixed />
         
-        {/* Gallery Header */}
         <div className="text-center pt-6 pb-10 px-4 relative z-10 max-w-4xl mx-auto">
           <p className="font-sans text-[11px] tracking-[0.4em] text-rose-700/50 uppercase mb-5">
             — Chapter I · Petals of memory —
@@ -427,36 +560,14 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-rose-400/40 to-transparent mx-auto mt-7" />
         </div>
 
-        {/* MASONRY GRID - Pinterest-style columns preserving original aspect ratios */}
         <div className="max-w-7xl mx-auto">
-          {/* 
-            CSS Multi-Column Layout creates true Pinterest-style waterfall grid.
-            Each item keeps its intrinsic height (original aspect ratio).
-            Responsive breakpoints: 2 columns (mobile), 3 columns (tablet), 4 columns (desktop).
-            Elegant spacing, break-inside to prevent card splitting across columns.
-          */}
-          <div 
-            className="columns-2 sm:columns-3 xl:columns-4 gap-x-5 [&>div]:mb-5"
-            style={{ 
-              columnGap: "1.25rem",
-            }}
-          >
-            {MEDIA.map((item, index) => (
-              <div 
-                key={index} 
-                className="break-inside-avoid"
-                style={{ 
-                  breakInside: "avoid",
-                  marginBottom: "1.25rem",
-                }}
-              >
-                <GiftCard item={item} index={index} />
-              </div>
+          <MasonryGrid columnCount={columnCount} gap={20}>
+            {MEDIA.map((item, idx) => (
+              <GiftCard key={idx} item={item} index={idx} />
             ))}
-          </div>
+          </MasonryGrid>
         </div>
 
-        {/* Decorative end note */}
         <div className="relative z-10 text-center mt-16 opacity-60">
           <p className="font-serif text-[11px] tracking-[0.25em] text-stone-500 uppercase">
             ∞ every moment with you is a treasure ∞
@@ -464,7 +575,6 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         </div>
       </section>
 
-      {/* Premium Floating CTA Button */}
       <motion.button
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: showUnlockHint ? 1 : 0, scale: showUnlockHint ? 1 : 0.92 }}
