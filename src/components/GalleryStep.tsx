@@ -247,7 +247,6 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               background: "linear-gradient(135deg, #f4e3d0, #e8c9ad)",
-              minHeight: "140px",
               boxShadow: "0 6px 18px -10px rgba(120,70,40,0.25)",
             } as React.CSSProperties
           }
@@ -270,7 +269,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 decoding="async"
                 draggable={false}
                 className="block w-full h-auto object-cover"
-                style={{ aspectRatio: "3 / 4", opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
+                style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.2s ease" }}
                 onLoad={() => setIsLoaded(true)}
               />
             </div>
@@ -295,7 +294,6 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
                 preload="none"
                 className="block w-full h-auto object-cover"
                 style={{
-                  aspectRatio: "3 / 4",
                   opacity: isLoaded ? 1 : 0,
                   transition: "opacity 0.2s ease",
                 }}
@@ -431,7 +429,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3">
+        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-2 sm:gap-3 md:grid-cols-3">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
