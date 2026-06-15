@@ -21,12 +21,12 @@ interface GalleryStepProps {
   onUnlock: () => void;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-    AUTO-DISCOVERY
-    The gallery auto-discovers files in /images/ and /videos/.
-    Drop a `gallery-XX.jpg` (or .png/.webp) into /images/ or a
-    `gallery-XX.mp4` into /videos/ and it appears automatically.
-    ═══════════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════ */
+/*     AUTO-DISCOVERY
+ *     The gallery auto-discovers files in /images/ and /videos/.
+ *     Drop a `gallery-XX.jpg` (or .png/.webp) into /images/ or a
+ *     `gallery-XX.mp4` into /videos/ and it appears automatically.
+ *     ════════════════════════════════════════════════════════════════ */
 
 interface MediaItem {
   type: "image" | "video";
@@ -148,9 +148,9 @@ const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
   };
 });
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   GIFT CARD
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════ */
+/*    GIFT CARD
+ *    ════════════════════════════════════════════════════════════════ */
 
 function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -220,7 +220,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   return (
     <motion.div
       ref={cardRef}
-      className="inline-block w-full mb-4 break-inside-avoid cursor-pointer"
+      className="w-full cursor-pointer"
       initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-25px" }}
@@ -338,9 +338,9 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   HERO
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════ */
+/*    HERO
+ *    ════════════════════════════════════════════════════════════════ */
 
 function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -429,7 +429,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-<div className="w-full columns-2 lg:columns-3 gap-4">
+        <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
