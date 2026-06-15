@@ -220,7 +220,7 @@ function GiftCard({ item, index }: { item: MediaItem; index: number }) {
   return (
     <motion.div
       ref={cardRef}
-      className="cursor-pointer"
+      className="inline-block w-full mb-4 break-inside-avoid cursor-pointer"
       initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-25px" }}
@@ -429,7 +429,7 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
           <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-[#c97b63]/60 to-transparent mx-auto mt-6" />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-x-1 sm:gap-x-2 gap-y-0.5 md:grid-cols-3">
+<div className="w-full columns-2 lg:columns-3 gap-4">
           {MEDIA.map((item, index) => (
             <GiftCard key={index} item={item} index={index} />
           ))}
