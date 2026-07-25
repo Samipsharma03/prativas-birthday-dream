@@ -63,7 +63,9 @@ for (const [path, url] of Object.entries(IMAGE_FILES)) {
 
 const videoByKey: Record<string, string> = {};
 for (const [path, url] of Object.entries(VIDEO_FILES)) {
-  videoByKey[fileKey(path)] = stripPublic(url);
+  const key = fileKey(path);
+  if (key === "final") continue; // reserved for the final-video theater
+  videoByKey[key] = stripPublic(url);
 }
 
 const ALL_KEYS = Array.from(
