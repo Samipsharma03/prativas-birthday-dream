@@ -132,7 +132,7 @@ export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
                 </div>
 
                 <div className="absolute bottom-3 left-0 w-full text-center font-script text-xs tracking-wide text-rose-700/60">
-                  for Prativa
+                  for Mummy &amp; Baba
                 </div>
               </div>
 
