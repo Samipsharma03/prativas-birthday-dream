@@ -544,13 +544,13 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         
         <div className="text-center pt-6 pb-10 px-4 relative z-10 max-w-4xl mx-auto">
           <p className="font-sans text-[11px] tracking-[0.4em] text-rose-700/50 uppercase mb-5">
-            — Chapter I · Petals of memory —
+            — Chapter I · A lifetime of love —
           </p>
           <h1 className="text-3xl font-light tracking-[0.18em] text-stone-700 uppercase sm:text-4xl md:text-5xl mb-4">
-            The Prativa Collection
+            Mummy &amp; Baba
           </h1>
           <p className="font-serif text-sm text-stone-600/70 italic max-w-md mx-auto">
-            A small gallery dedicated to the girl who carries sunshine wherever she goes.
+            A little gallery of memories — from the son who owes you everything.
           </p>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-rose-400/40 to-transparent mx-auto mt-7" />
         </div>
