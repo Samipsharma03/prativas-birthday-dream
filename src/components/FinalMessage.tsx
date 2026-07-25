@@ -67,10 +67,10 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           transition={{ duration: 0.9, delay: 0.6, ease: "easeOut" }}
           className="font-display text-3xl font-light leading-tight text-[#4a2f22] sm:text-4xl"
         >
-          happy birthday,
+          happy anniversary,
           <br />
           <span className="font-script text-4xl italic text-[#a55b46] sm:text-5xl">
-            Prativa
+            Mummy &amp; Baba
           </span>
         </motion.h1>
 
@@ -91,9 +91,10 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           transition={{ duration: 0.9, delay: 1.05, ease: "easeOut" }}
           className="text-[15px] font-light leading-relaxed text-[#5a3d2e]/85 sm:text-base"
         >
-          thank you for being you — the gentlest, brightest part of every
-          ordinary day. here&apos;s to a year of soft moons, kind mornings,
-          and every quiet dream coming true.
+          thank you — for every sacrifice quietly made, every prayer whispered
+          for me, every late night, every warm meal, and every lesson wrapped in
+          love. everything I am, and everything I hope to be, began with the two
+          of you. here&apos;s to many more years of your beautiful love story.
         </motion.p>
 
         <motion.p
@@ -103,7 +104,7 @@ export function FinalMessage({ onReplay }: FinalMessageProps) {
           className="mt-7 flex items-center gap-2 font-script text-lg text-[#a55b46]"
         >
           <span aria-hidden>♡</span>
-          always, Samip
+          with all my love, your son
           <span aria-hidden>♡</span>
         </motion.p>
 
