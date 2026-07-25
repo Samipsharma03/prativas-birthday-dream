@@ -50,7 +50,7 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           transition={{ delay: 0.3, duration: 1.1, ease: "easeOut" }}
           className="font-script text-base text-[#a87358] sm:text-lg"
         >
-          a little something for
+          a heartfelt tribute for
         </motion.p>
 
         <motion.h2
@@ -59,7 +59,7 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           transition={{ delay: 1.4, duration: 1.2, ease: "easeOut" }}
           className="font-display text-xl font-light italic text-[#5a3d2e]/85 sm:text-2xl md:text-3xl"
         >
-          the girl who effortlessly makes every single day a bit brighter...
+          the two souls whose love became the home I grew up in...
         </motion.h2>
 
         <motion.h1
@@ -68,7 +68,7 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
           transition={{ delay: 2.6, duration: 1.3, ease: "easeOut" }}
           className="text-shimmer mt-1 font-display text-4xl font-light leading-tight tracking-tight sm:text-5xl md:text-6xl"
         >
-          Happy Birthday, Prativa
+          Happy Anniversary, Mummy & Baba
         </motion.h1>
 
         <motion.div
@@ -95,7 +95,7 @@ export function BirthdayIntro({ onContinue, active = true }: BirthdayIntroProps)
               "0 6px 22px -10px rgba(150, 90, 60, 0.35), inset 0 1px 0 rgba(255,255,255,0.6)",
           }}
         >
-          <span>Read My Message</span>
+          <span>Read My Letter</span>
         </motion.button>
       </div>
     </section>
