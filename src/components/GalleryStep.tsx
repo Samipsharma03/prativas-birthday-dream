@@ -31,48 +31,57 @@ interface MediaItem {
   wide: boolean; // preserved for metadata
 }
 
-const IMAGE_FILES = import.meta.glob("/public/images/gallery-*", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>;
+const IMAGE_FILES = import.meta.glob(
+  "/public/images/*.{jpg,jpeg,png,webp,gif,avif,JPG,JPEG,PNG,WEBP,GIF,AVIF}",
+  { eager: true, query: "?url", import: "default" },
+) as Record<string, string>;
 
-const VIDEO_FILES = import.meta.glob("/public/videos/gallery-*", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>;
+const VIDEO_FILES = import.meta.glob(
+  "/public/videos/*.{mp4,webm,mov,m4v,ogv,MP4,WEBM,MOV,M4V,OGV}",
+  { eager: true, query: "?url", import: "default" },
+) as Record<string, string>;
 
-function extractSlot(path: string): string | null {
-  const m = /gallery-(\d+)\./i.exec(path);
-  return m ? m[1] : null;
+function fileKey(path: string): string {
+  // Strip directory + extension; used both as stable sort key and as the
+  // "slot" for optional per-file metadata overrides in SLOT_META.
+  const base = path.split("/").pop() ?? path;
+  return base.replace(/\.[^.]+$/, "");
 }
 
-const imageBySlot: Record<string, string> = {};
+function stripPublic(url: string): string {
+  return url.replace(/^\/public/, "");
+}
+
+// Natural sort so "photo2" precedes "photo10", case-insensitive.
+const naturalCompare = (a: string, b: string) =>
+  a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+
+const imageByKey: Record<string, string> = {};
 for (const [path, url] of Object.entries(IMAGE_FILES)) {
-  const slot = extractSlot(path);
-  if (slot) imageBySlot[slot] = url.replace("/public", "");
+  imageByKey[fileKey(path)] = stripPublic(url);
 }
 
-const videoBySlot: Record<string, string> = {};
+const videoByKey: Record<string, string> = {};
 for (const [path, url] of Object.entries(VIDEO_FILES)) {
-  const slot = extractSlot(path);
-  if (slot) videoBySlot[slot] = url.replace("/public", "");
+  videoByKey[fileKey(path)] = stripPublic(url);
 }
 
-const ALL_SLOTS = Array.from(
-  new Set([...Object.keys(imageBySlot), ...Object.keys(videoBySlot)]),
-).sort((a, b) => Number(a) - Number(b));
+const ALL_KEYS = Array.from(
+  new Set([...Object.keys(imageByKey), ...Object.keys(videoByKey)]),
+).sort(naturalCompare);
 
+// Optional per-file overrides. Key by the filename without extension
+// (e.g. "gallery-10", "beach-day", "IMG_2043"). Files not listed here
+// still appear automatically — this is purely for customization.
 const SLOT_META: Record<string, { message?: string; wide?: boolean }> = {
-  "01": { wide: true },
-  "06": { wide: true },
-  "09": { wide: true },
-  "10": { message: "You two are the reason I understand what real love looks like. ❤️" },
-  "11": { wide: false },
-  "15": { wide: true },
-  "18": { message: "Happy Anniversary, Mummy & Baba — thank you for everything." },
-  "21": { wide: true },
+  "gallery-01": { wide: true },
+  "gallery-06": { wide: true },
+  "gallery-09": { wide: true },
+  "gallery-10": { message: "You two are the reason I understand what real love looks like. ❤️" },
+  "gallery-11": { wide: false },
+  "gallery-15": { wide: true },
+  "gallery-18": { message: "Happy Anniversary, Mummy & Baba — thank you for everything." },
+  "gallery-21": { wide: true },
 };
 
 const PRATIVA_MESSAGES = [
@@ -108,32 +117,32 @@ const PRATIVA_MESSAGES = [
   "Happy Anniversary, Mummy & Baba — I love you both, more than words can hold. ❤️"
 ];
 
-const messageForIndex = (index: number, slot: string): string => {
-  const explicit = SLOT_META[slot]?.message;
+const messageForIndex = (index: number, key: string): string => {
+  const explicit = SLOT_META[key]?.message;
   if (explicit) return explicit;
   return PRATIVA_MESSAGES[index % PRATIVA_MESSAGES.length];
 };
 
-const MEDIA: MediaItem[] = ALL_SLOTS.map((slot, index) => {
-  const num = Number(slot);
-  const videoUrl = videoBySlot[slot];
-  const imageUrl = imageBySlot[slot];
+const MEDIA: MediaItem[] = ALL_KEYS.map((key, index) => {
+  const videoUrl = videoByKey[key];
+  const imageUrl = imageByKey[key];
+  const wideDefault = index % 5 === 1;
 
   if (videoUrl) {
     return {
       type: "video",
       src: videoUrl,
       poster: imageUrl,
-      message: messageForIndex(index, slot),
-      wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
+      message: messageForIndex(index, key),
+      wide: SLOT_META[key]?.wide ?? wideDefault,
     };
   }
 
   return {
     type: "image",
     src: imageUrl,
-    message: messageForIndex(index, slot),
-    wide: SLOT_META[slot]?.wide ?? num % 5 === 1,
+    message: messageForIndex(index, key),
+    wide: SLOT_META[key]?.wide ?? wideDefault,
   };
 });
 
