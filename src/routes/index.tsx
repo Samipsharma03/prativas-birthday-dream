@@ -15,15 +15,15 @@ type Step = "birthdayIntro" | "gallery" | "letter";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Happy Birthday, Prativa ✨" },
+      { title: "Happy Anniversary, Mummy & Baba ❤️" },
       {
         name: "description",
-        content: "A magical birthday journey for Prativa — memories and a final video surprise.",
+        content: "A heartfelt anniversary tribute to Mummy & Baba — memories and a final video from their son.",
       },
-      { property: "og:title", content: "Happy Birthday, Prativa ✨" },
+      { property: "og:title", content: "Happy Anniversary, Mummy & Baba ❤️" },
       {
         property: "og:description",
-        content: "A magical birthday journey for Prativa.",
+        content: "A heartfelt anniversary tribute to Mummy & Baba.",
       },
       { name: "theme-color", content: "#110f1c" },
     ],
