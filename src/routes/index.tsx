@@ -31,17 +31,15 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const GALLERY_IMAGES = import.meta.glob("/public/images/gallery-*", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>;
+const GALLERY_IMAGES = import.meta.glob(
+  "/public/images/*.{jpg,jpeg,png,webp,gif,avif,JPG,JPEG,PNG,WEBP,GIF,AVIF}",
+  { eager: true, query: "?url", import: "default" },
+) as Record<string, string>;
 
-const GALLERY_VIDEOS = import.meta.glob("/videos/gallery-*", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>;
+const GALLERY_VIDEOS = import.meta.glob(
+  "/public/videos/*.{mp4,webm,mov,m4v,ogv,MP4,WEBM,MOV,M4V,OGV}",
+  { eager: true, query: "?url", import: "default" },
+) as Record<string, string>;
 
 const FINAL_VIDEO_GLOB = import.meta.glob("/videos/final.*", {
   eager: true,
