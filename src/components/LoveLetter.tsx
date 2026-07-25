@@ -14,7 +14,7 @@ type Phase = "idle" | "letterOpen" | "video" | "final";
 
 // ✏️ Edit her letter here
 const LETTER_TEXT =
-  "You have this incredibly rare, amazing energy that just makes everything feel a little brighter whenever you're around. I don't think you even realize how much your presence is appreciated, Prativa. Happy Birthday!";
+  "Mummy, Baba — thank you. For every sacrifice you never asked me to notice, every prayer you whispered for me, and every silent way you held our home together. Your love story is the first and most beautiful one I ever knew, and everything good in me is a reflection of the two of you. Happy Anniversary. I love you both, endlessly.";
 
 export function LoveLetter({ onOpenComplete }: LoveLetterProps) {
   const [phase, setPhase] = useState<Phase>("idle");
