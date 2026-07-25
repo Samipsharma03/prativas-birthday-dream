@@ -68,49 +68,44 @@ const SLOT_META: Record<string, { message?: string; wide?: boolean }> = {
   "01": { wide: true },
   "06": { wide: true },
   "09": { wide: true },
-  "10": { message: "You deserve all the happiness in the universe." },
+  "10": { message: "You two are the reason I understand what real love looks like. ❤️" },
   "11": { wide: false },
   "15": { wide: true },
-  "18": { message: "May this year bring you everything your heart desires." },
+  "18": { message: "Happy Anniversary, Mummy & Baba — thank you for everything." },
   "21": { wide: true },
 };
 
 const PRATIVA_MESSAGES = [
-  "In a world full of temporary things, you stand as a beautiful, forever constant. ✨",
-  "Your laughter is an incredibly comforting melody, bringing absolute joy wherever it echoes. 🤍",
-  "It is truly wonderful how one single soul can hold so much profound grace.",
-  "Your presence alone, Prativa, makes the entire world feel softer, kinder, and so much warmer.",
-  "Every quiet moment showing your gentle heart is a precious treasure that shines incredibly bright.",
-  "You have this rare, magical ability to heal the world around you just by existing in it. 🌸",
-  "Your gentle nature has a way of turning the loudest, most chaotic storms into calm and peaceful seas.",
-  "You deserve to see yourself clearly to fully realize just how incredibly radiant, beautiful, and special you truly are.",
-  "You are a beautiful thought at the dawn of the day and a source of profound peace when the night falls.",
-  "Your genuine smile carries a profound kind of peace that effortlessly brightens up the entire room.",
-  "You are like beautiful poetry brought to life, radiating light and elegance into the world. 📜",
-  "No matter where life leads, your incredible grace and pure heart will always remain unforgettable.",
-  "Your kindness isn't loud, Prativa, but it echoes deeply in the hearts of everyone lucky enough to know you.",
-  "You are an incredible anchor, bringing a deep sense of stability, warmth, and grace wherever you go.",
-  "Your wonderful soul deserves the absolute highest admiration, appreciation, and love every single day. 💫",
-  "Your presence is like a warm ray of sunshine on a rainy afternoon—perfect, comforting, and absolutely necessary.",
-  "The universe spent billions of years creating everything, but you are its absolute masterpiece.",
-  "Even on the days when the dark clouds roll in, your light breaks through effortlessly.",
-  "You define what love truly is—not just a fleeting feeling, but a beautiful, secure, and entirely safe place. 🏡",
-  "Every single detail about you—your quirks, your gentle heart, your strength—is worth celebrating.",
-  "You are a rare and extraordinary blessing who makes the world infinitely more beautiful just by being in it.",
-  "Your quiet strength is a silent reassurance that everything is going to be okay, no matter how chaotic the world gets.",
-  "Your life is a beautiful, unfolding story of grace, kindness, and magic that leaves everyone in absolute awe. 📖",
-  "You possess a quiet, fierce strength that is absolutely breathtaking and worthy of admiration every single time.",
-  "Your existence is completely vital, bringing a breath of fresh air, pure joy, and meaning to the world. ❤️",
-  "You are a true sanctuary, Prativa. Not just a person, but a beautiful, comforting soul where peace resides.",
-  "There is a deep warmth in your eyes that can instantly melt away the heaviest burdens of a long, stressful day.",
-  "If the world were a blank canvas, you would be the brightest, most breathtaking colors painted across it. 🎨",
-  "You have an incredibly rare depth, possessing an innate ability to connect with people and bring comfort without needing a single word.",
-  "Your radiant energy turns the ordinary, mundane moments of life into absolute, pure magic.",
-  "You are a perfect sanctuary, a brilliant adventure, and a truly sweet reality all wrapped into one magnificent person. 🌌",
-  "The profound depth of your heart is a beautiful, endless landscape of kindness and grace.",
-  "You are the living proof of the kind of pure, genuine goodness that this world so desperately needs right now.",
-  "The day you entered the world made it a significantly brighter, happier, and more beautiful place. 🎂",
-  "You are a bright sun when days are dark, a guiding moon when nights are long, and a soul filled with brilliant light. ☀️🌙"
+  "Mummy, Baba — your love story is the first fairytale I ever believed in. ✨",
+  "Thank you for the countless sacrifices I only understood as I grew older. 🤍",
+  "Every warm meal, every prayer, every late night — I remember them all.",
+  "You built a home where love was the loudest language spoken. 🏡",
+  "Baba, thank you for working so hard so I could dream so freely.",
+  "Mummy, your gentle strength is the softest, safest place I have ever known.",
+  "Watching you two together taught me what patience and partnership really mean.",
+  "Everything good in me is a small reflection of the two of you. 🌸",
+  "Thank you for choosing each other, and for giving me this beautiful family.",
+  "Your love is the quiet magic that has held our lives together. 💫",
+  "For every scolding wrapped in love, and every hug that fixed everything — thank you.",
+  "You are my first heroes, and you always will be.",
+  "The way you laugh together still makes our home feel like the safest place on earth.",
+  "Baba, your calm has shaped mine. Mummy, your warmth has shaped my heart.",
+  "Growing up, I didn't know I was watching the greatest love story of my life.",
+  "Thank you for the values, the roots, and the wings. 🕊️",
+  "Every good memory I own has your fingerprints on it.",
+  "I hope one day I can love someone the way the two of you love each other.",
+  "This home, this love, this family — it all began with you two saying yes to each other. 💍",
+  "Happy Anniversary to the couple who taught me what forever looks like. ❤️",
+  "For every quiet way you carried us — thank you, from the bottom of my heart.",
+  "You made ordinary days feel like something worth remembering.",
+  "The love between you two is the greatest inheritance I could ever ask for.",
+  "Baba, Mummy — I am so proud to be your son. 🙏",
+  "May your love keep growing, softer and stronger, with every passing year.",
+  "Thank you for being my safe place, my compass, and my greatest blessing. 🌙",
+  "Here's to another year of your beautiful, quiet, unshakeable love. 🥂",
+  "Every prayer I have is for the two of you to always stay this happy.",
+  "Your love is the reason I still believe in good things. ✨",
+  "Happy Anniversary, Mummy & Baba — I love you both, more than words can hold. ❤️"
 ];
 
 const messageForIndex = (index: number, slot: string): string => {
@@ -549,13 +544,13 @@ export function GalleryStep({ onUnlock }: GalleryStepProps) {
         
         <div className="text-center pt-6 pb-10 px-4 relative z-10 max-w-4xl mx-auto">
           <p className="font-sans text-[11px] tracking-[0.4em] text-rose-700/50 uppercase mb-5">
-            — Chapter I · Petals of memory —
+            — Chapter I · A lifetime of love —
           </p>
           <h1 className="text-3xl font-light tracking-[0.18em] text-stone-700 uppercase sm:text-4xl md:text-5xl mb-4">
-            The Prativa Collection
+            Mummy &amp; Baba
           </h1>
           <p className="font-serif text-sm text-stone-600/70 italic max-w-md mx-auto">
-            A small gallery dedicated to the girl who carries sunshine wherever she goes.
+            A little gallery of memories — from the son who owes you everything.
           </p>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-rose-400/40 to-transparent mx-auto mt-7" />
         </div>
