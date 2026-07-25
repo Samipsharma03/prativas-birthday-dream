@@ -348,7 +348,7 @@ function MasonryGrid({ children, columnCount, gap }: MasonryGridProps) {
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemHeights = useRef<Map<number, number>>(new Map());
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   // Update column widths on resize
   useEffect(() => {
